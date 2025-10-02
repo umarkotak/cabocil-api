@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ImgBasePath = "ytkidd-api-m4.cloudflare-avatar-id-1.site/comfy_ui_gallery"
+	ImgBasePath = "cabocil-api.cabocil.com/comfy_ui_gallery"
 )
 
 func Gallery(w http.ResponseWriter, r *http.Request) {
