@@ -16,10 +16,13 @@ import (
 func Record(ctx context.Context, params contract.RecordUserActivity) error {
 	var err error
 
-	user, err := user_repo.GetByGuid(ctx, params.UserGuid)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return err
+	if params.UserGuid != "" {
+		user, err := user_repo.GetByGuid(ctx, params.UserGuid)
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			return err
+		}
+		params.UserID = user.ID
 	}
 
 	if params.UserID == 0 && params.AppSession == "" {
@@ -47,7 +50,7 @@ func Record(ctx context.Context, params contract.RecordUserActivity) error {
 	}
 
 	_, err = user_activity_repo.Upsert(ctx, nil, model.UserActivity{
-		UserID:               user.ID,
+		UserID:               params.UserID,
 		AppSession:           params.AppSession,
 		YoutubeVideoID:       params.YoutubeVideoID,
 		BookID:               params.BookID,

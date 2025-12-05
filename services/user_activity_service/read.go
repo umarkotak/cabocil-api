@@ -16,12 +16,14 @@ import (
 func GetUserActivities(ctx context.Context, params contract.GetUserActivity) (contract_resp.GetUserActivity, error) {
 	var err error
 
-	user, err := user_repo.GetByGuid(ctx, params.UserGuid)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return contract_resp.GetUserActivity{}, err
+	if params.UserGuid != "" {
+		user, err := user_repo.GetByGuid(ctx, params.UserGuid)
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			return contract_resp.GetUserActivity{}, err
+		}
+		params.UserID = user.ID
 	}
-	params.UserID = user.ID
 
 	if params.UserID == 0 && params.AppSession == "" {
 		return contract_resp.GetUserActivity{}, fmt.Errorf("missing user identifier")
