@@ -21,6 +21,8 @@ import (
 	"github.com/umarkotak/ytkidd-api/utils/random"
 )
 
+const CAESIUMCLT_PATH = "/opt/homebrew/bin/caesiumclt"
+
 func InsertFromPdf(ctx context.Context, params contract.InsertFromPdf) error {
 	var err error
 
@@ -167,7 +169,7 @@ func InsertFromPdf(ctx context.Context, params contract.InsertFromPdf) error {
 			logrus.Infof("comporessing image start")
 			if params.ImgFormat == model.IMAGE_PNG {
 				cmdComp1 := exec.Command(
-					"caesiumclt", "--lossless",
+					CAESIUMCLT_PATH, "--lossless",
 					"-o", bookDir, filePath,
 				)
 				output1, err := cmdComp1.CombinedOutput()
@@ -180,7 +182,7 @@ func InsertFromPdf(ctx context.Context, params contract.InsertFromPdf) error {
 
 			} else {
 				cmdComp1 := exec.Command(
-					"caesiumclt", "--lossless",
+					CAESIUMCLT_PATH, "--lossless",
 					"-o", bookDir, filePath,
 				)
 				output1, err := cmdComp1.CombinedOutput()
@@ -192,7 +194,7 @@ func InsertFromPdf(ctx context.Context, params contract.InsertFromPdf) error {
 				}
 
 				cmdComp2 := exec.Command(
-					"caesiumclt", "-q", "60",
+					CAESIUMCLT_PATH, "-q", "60",
 					"-o", bookDir, filePath,
 				)
 				output2, err := cmdComp2.CombinedOutput()
