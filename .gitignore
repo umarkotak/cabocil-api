@@ -5,3 +5,6 @@ vendor
 ytkidd-api
 nohup.out
 file_bucket/*
+cabocil-api
+cabocil-api.error.log
+cabocil-api.log
