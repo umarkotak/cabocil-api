@@ -66,3 +66,16 @@ func GetByParams(ctx context.Context, params contract.GetYoutubeVideos) ([]model
 	}
 	return objs, nil
 }
+
+func GetIDsByChannelID(ctx context.Context, youtubeChannelID int64) ([]int64, error) {
+	objs := []int64{}
+
+	err := stmtGetIDsByChannelID.SelectContext(ctx, &objs, map[string]any{
+		"youtube_channel_id": youtubeChannelID,
+	})
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return objs, err
+	}
+	return objs, nil
+}

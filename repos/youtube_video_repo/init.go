@@ -136,17 +136,33 @@ var (
 		WHERE
 			id = :id
 	`
+
+	queryDeleteByChannelID = `
+		DELETE FROM youtube_videos
+		WHERE
+			youtube_channel_id = :youtube_channel_id
+	`
+
+	queryGetIDsByChannelID = `
+		SELECT
+			id
+		FROM youtube_videos
+		WHERE
+			youtube_channel_id = :youtube_channel_id
+	`
 )
 
 var (
-	stmtGetByID         *sqlx.NamedStmt
-	stmtGetByExternalID *sqlx.NamedStmt
-	stmtGetForSearch    *sqlx.NamedStmt
-	stmtGetByParams     *sqlx.NamedStmt
-	stmtInsert          *sqlx.NamedStmt
-	stmtUpdate          *sqlx.NamedStmt
-	stmtSoftDelete      *sqlx.NamedStmt
-	stmtDelete          *sqlx.NamedStmt
+	stmtGetByID           *sqlx.NamedStmt
+	stmtGetByExternalID   *sqlx.NamedStmt
+	stmtGetForSearch      *sqlx.NamedStmt
+	stmtGetByParams       *sqlx.NamedStmt
+	stmtInsert            *sqlx.NamedStmt
+	stmtUpdate            *sqlx.NamedStmt
+	stmtSoftDelete        *sqlx.NamedStmt
+	stmtDelete            *sqlx.NamedStmt
+	stmtDeleteByChannelID *sqlx.NamedStmt
+	stmtGetIDsByChannelID *sqlx.NamedStmt
 )
 
 func Initialize() {
@@ -181,6 +197,14 @@ func Initialize() {
 		logrus.Fatal(err)
 	}
 	stmtDelete, err = datastore.Get().Db.PrepareNamed(queryDelete)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	stmtDeleteByChannelID, err = datastore.Get().Db.PrepareNamed(queryDeleteByChannelID)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	stmtGetIDsByChannelID, err = datastore.Get().Db.PrepareNamed(queryGetIDsByChannelID)
 	if err != nil {
 		logrus.Fatal(err)
 	}

@@ -93,6 +93,12 @@ var (
 		WHERE
 			id = :id
 	`
+
+	queryDelete = `
+		DELETE FROM youtube_channels
+		WHERE
+			id = :id
+	`
 )
 
 var (
@@ -102,6 +108,7 @@ var (
 	stmtInsert          *sqlx.NamedStmt
 	stmtUpdate          *sqlx.NamedStmt
 	stmtSoftDelete      *sqlx.NamedStmt
+	stmtDelete          *sqlx.NamedStmt
 )
 
 func Initialize() {
@@ -128,6 +135,10 @@ func Initialize() {
 		logrus.Fatal(err)
 	}
 	stmtSoftDelete, err = datastore.Get().Db.PrepareNamed(querySoftDelete)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	stmtDelete, err = datastore.Get().Db.PrepareNamed(queryDelete)
 	if err != nil {
 		logrus.Fatal(err)
 	}

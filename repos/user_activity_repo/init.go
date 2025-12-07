@@ -168,15 +168,29 @@ var (
 			metadata = :metadata
 		RETURNING id
 	`
+
+	queryDeleteByYoutubeVideoIDs = `
+		DELETE FROM user_activities
+		WHERE
+			youtube_video_id = ANY(:youtube_video_ids)
+	`
+
+	queryDeleteByBookIDs = `
+		DELETE FROM user_activities
+		WHERE
+			book_id = ANY(:book_ids)
+	`
 )
 
 var (
-	stmtGetByParams           *sqlx.NamedStmt
-	stmtGetFullByParams       *sqlx.NamedStmt
-	stmtGetByUserActivity     *sqlx.NamedStmt
-	stmtGetFullByUserActivity *sqlx.NamedStmt
-	stmtInsert                *sqlx.NamedStmt
-	stmtUpsert                *sqlx.NamedStmt
+	stmtGetByParams             *sqlx.NamedStmt
+	stmtGetFullByParams         *sqlx.NamedStmt
+	stmtGetByUserActivity       *sqlx.NamedStmt
+	stmtGetFullByUserActivity   *sqlx.NamedStmt
+	stmtInsert                  *sqlx.NamedStmt
+	stmtUpsert                  *sqlx.NamedStmt
+	stmtDeleteByYoutubeVideoIDs *sqlx.NamedStmt
+	stmtDeleteByBookIDs         *sqlx.NamedStmt
 )
 
 func Initialize() {
@@ -203,6 +217,14 @@ func Initialize() {
 		logrus.Fatal(err)
 	}
 	stmtUpsert, err = datastore.Get().Db.PrepareNamed(queryUpsert)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	stmtDeleteByYoutubeVideoIDs, err = datastore.Get().Db.PrepareNamed(queryDeleteByYoutubeVideoIDs)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	stmtDeleteByBookIDs, err = datastore.Get().Db.PrepareNamed(queryDeleteByBookIDs)
 	if err != nil {
 		logrus.Fatal(err)
 	}

@@ -2,6 +2,7 @@ package book_service
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"io"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/ytkidd-api/config"
 	"github.com/umarkotak/ytkidd-api/contract"
@@ -18,6 +20,7 @@ import (
 	"github.com/umarkotak/ytkidd-api/repos/book_content_repo"
 	"github.com/umarkotak/ytkidd-api/repos/book_repo"
 	"github.com/umarkotak/ytkidd-api/repos/file_bucket_repo"
+	"github.com/umarkotak/ytkidd-api/repos/user_activity_repo"
 	"github.com/umarkotak/ytkidd-api/repos/user_repo"
 	"github.com/umarkotak/ytkidd-api/repos/user_stroke_repo"
 	"github.com/umarkotak/ytkidd-api/repos/user_subscription_repo"
@@ -196,25 +199,31 @@ func DeleteBook(ctx context.Context, params contract.DeleteBook) error {
 
 	err = datastore.Transaction(ctx, datastore.Get().Db, func(tx *sqlx.Tx) error {
 		err = user_stroke_repo.DeleteByBookID(ctx, tx, book.ID)
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
+			logrus.WithContext(ctx).Error(err)
+			return err
+		}
+
+		err = user_activity_repo.DeleteByBookIDs(ctx, tx, pq.Int64Array{book.ID})
+		if err != nil && err != sql.ErrNoRows {
 			logrus.WithContext(ctx).Error(err)
 			return err
 		}
 
 		err = book_content_repo.DeleteByBookID(ctx, tx, book.ID)
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			logrus.WithContext(ctx).Error(err)
 			return err
 		}
 
 		err = book_repo.Delete(ctx, tx, book.ID)
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			logrus.WithContext(ctx).Error(err)
 			return err
 		}
 
 		err = file_bucket_repo.DeleteByGuids(ctx, tx, fileBucketGuids)
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			logrus.WithContext(ctx).Error(err)
 			return err
 		}
@@ -229,7 +238,7 @@ func DeleteBook(ctx context.Context, params contract.DeleteBook) error {
 		} else {
 			err = file_bucket.DeleteFolder(fmt.Sprintf("%s/books/%s", config.Get().FileBucketPath, book.Slug))
 		}
-		if err != nil {
+		if err != nil && !strings.Contains(err.Error(), "no such file or directory") {
 			logrus.WithContext(ctx).Error(err)
 			return err
 		}

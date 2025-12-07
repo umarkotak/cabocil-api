@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/ytkidd-api/config"
 	"github.com/umarkotak/ytkidd-api/datastore"
 	"github.com/umarkotak/ytkidd-api/model"
@@ -67,30 +68,37 @@ var errDangerousPath = errors.New("refusing to delete dangerous path")
 // It refuses to delete "", ".", root, or the current working dir.
 func DeleteFolder(path string) error {
 	if path == "" || path == "." || path == "/" || path == `\` {
+		logrus.Error(errDangerousPath)
 		return errDangerousPath
 	}
 
 	abs, err := filepath.Abs(path)
 	if err != nil {
+		logrus.Error(err)
 		return err
 	}
 
 	// Extra guard: don't allow deleting the current working directory.
 	cwd, err := os.Getwd()
 	if err != nil {
+		logrus.Error(err)
 		return err
 	}
 	if abs == cwd || abs == string(filepath.Separator) {
+		logrus.Error(errDangerousPath)
 		return errDangerousPath
 	}
 
 	// Optional: ensure it exists and is a directory (gives nicer errors)
 	info, err := os.Lstat(abs)
 	if err != nil {
+		logrus.Error(err)
 		return err
 	}
 	if !info.IsDir() {
-		return errors.New("path is not a directory")
+		err = errors.New("path is not a directory")
+		logrus.Error(err)
+		return err
 	}
 
 	return os.RemoveAll(abs)

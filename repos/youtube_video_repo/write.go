@@ -96,3 +96,26 @@ func Delete(ctx context.Context, tx *sqlx.Tx, id int64) error {
 
 	return nil
 }
+
+func DeleteByChannelID(ctx context.Context, tx *sqlx.Tx, youtubeChannelID int64) error {
+	var err error
+
+	stmt := stmtDeleteByChannelID
+	if tx != nil {
+		stmt, err = tx.PrepareNamedContext(ctx, queryDeleteByChannelID)
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			return err
+		}
+	}
+
+	_, err = stmt.ExecContext(ctx, map[string]any{
+		"youtube_channel_id": youtubeChannelID,
+	})
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return err
+	}
+
+	return nil
+}

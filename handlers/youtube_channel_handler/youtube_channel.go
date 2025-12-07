@@ -120,3 +120,16 @@ func UpdateYoutubeChannel(w http.ResponseWriter, r *http.Request) {
 
 	render.Response(w, r, 200, map[string]any{})
 }
+
+func DeleteYoutubeChannel(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	err := youtube_channel_service.DeleteChannel(ctx, utils.StringMustInt64(chi.URLParam(r, "id")))
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		render.Error(w, r, err, "")
+		return
+	}
+
+	render.Response(w, r, 200, map[string]any{})
+}
