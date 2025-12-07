@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
@@ -25,6 +27,10 @@ const CAESIUMCLT_PATH = "/opt/homebrew/bin/caesiumclt"
 
 func InsertFromPdf(ctx context.Context, params contract.InsertFromPdf, uploadState *model.UploadState) error {
 	var err error
+
+	unixStr := strconv.FormatInt(time.Now().Unix(), 10)
+	lastFour := unixStr[len(unixStr)-4:]
+	params.Slug = fmt.Sprintf("%s-%s", lastFour, params.Slug)
 
 	if params.Storage == "" {
 		params.Storage = model.STORAGE_LOCAL

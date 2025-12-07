@@ -40,37 +40,47 @@ func ScrapVideos(ctx context.Context, params contract.ScrapVideos) (string, bool
 		return nextPageToken, someVideoExist, err
 	}
 
-	for _, item := range response.Items {
-		if item.Id.Kind != "youtube#video" {
-			continue
-		}
+	youtubeChannel, err := youtube_channel_repo.GetByExternalID(ctx, params.ChannelID)
+	if err != nil && err != sql.ErrNoRows {
+		logrus.WithContext(ctx).Error(err)
+		return nextPageToken, someVideoExist, err
+	}
 
-		youtubeChannel, err := youtube_channel_repo.GetByExternalID(ctx, params.ChannelID)
-		if err != nil && err != sql.ErrNoRows {
+	youtubeChannelDetail, err := GetYouTubeChannelDetails(config.Get().YoutubeApiKey, params.ChannelID)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return nextPageToken, someVideoExist, err
+	}
+
+	if youtubeChannel.ID == 0 {
+		youtubeChannel = model.YoutubeChannel{
+			ExternalID:  params.ChannelID,
+			Name:        youtubeChannelDetail.Name,
+			Username:    youtubeChannelDetail.Name,
+			ImageUrl:    youtubeChannelDetail.ThumbnailURL,
+			Tags:        []string{},
+			ChannelLink: youtubeChannelDetail.URL,
+		}
+		youtubeChannel.ID, err = youtube_channel_repo.Insert(ctx, nil, youtubeChannel)
+		if err != nil {
 			logrus.WithContext(ctx).Error(err)
 			return nextPageToken, someVideoExist, err
 		}
 
-		if youtubeChannel.ID == 0 {
-			youtubeChannelDetail, err := GetYouTubeChannelDetails(config.Get().YoutubeApiKey, params.ChannelID)
-			if err != nil {
-				logrus.WithContext(ctx).Error(err)
-				return nextPageToken, someVideoExist, err
-			}
+	} else {
+		youtubeChannel.Name = youtubeChannelDetail.Name
+		youtubeChannel.Username = youtubeChannelDetail.Name
+		youtubeChannel.ImageUrl = youtubeChannelDetail.ThumbnailURL
+		err = youtube_channel_repo.Update(ctx, nil, youtubeChannel)
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			return nextPageToken, someVideoExist, err
+		}
+	}
 
-			youtubeChannel = model.YoutubeChannel{
-				ExternalID:  params.ChannelID,
-				Name:        html.UnescapeString(item.Snippet.ChannelTitle),
-				Username:    html.UnescapeString(item.Snippet.ChannelTitle),
-				ImageUrl:    youtubeChannelDetail.ThumbnailURL,
-				Tags:        []string{},
-				ChannelLink: youtubeChannelDetail.URL,
-			}
-			youtubeChannel.ID, err = youtube_channel_repo.Insert(ctx, nil, youtubeChannel)
-			if err != nil {
-				logrus.WithContext(ctx).Error(err)
-				return nextPageToken, someVideoExist, err
-			}
+	for _, item := range response.Items {
+		if item.Id.Kind != "youtube#video" {
+			continue
 		}
 
 		// js, _ := item.MarshalJSON()

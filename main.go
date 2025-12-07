@@ -204,7 +204,7 @@ func initializeHttpServer() {
 		rAdminAuth.Patch("/youtube_channel/{id}", youtube_channel_handler.UpdateYoutubeChannel)
 		rAdminAuth.Delete("/youtube_channel/{id}", youtube_channel_handler.DeleteYoutubeChannel)
 
-		ri.Post("/youtube/scrap_videos", youtube_handler.ScrapVideos)
+		rAdminAuth.Post("/youtube/scrap_videos", youtube_handler.ScrapVideos)
 
 		rAdminAuth.Get("/books/upload_status", book_handler.GetBooksUploadStatus)
 		rAdminAuth.Post("/books/insert_from_pdf", book_handler.InsertFromPdf)
