@@ -17,9 +17,14 @@ func GetUserActivities(w http.ResponseWriter, r *http.Request) {
 
 	commonCtx := common_ctx.GetFromCtx(ctx)
 
+	appSession := commonCtx.AppSession
+	if commonCtx.UserAuth.GUID != "" {
+		appSession = commonCtx.UserAuth.GUID
+	}
+
 	params := contract.GetUserActivity{
 		UserGuid:   commonCtx.UserAuth.GUID,
-		AppSession: commonCtx.AppSession,
+		AppSession: appSession,
 		Pagination: model.Pagination{
 			Limit: utils.StringMustInt64(r.URL.Query().Get("limit")),
 			Page:  utils.StringMustInt64(r.URL.Query().Get("page")),
@@ -42,9 +47,14 @@ func PostUserActivity(w http.ResponseWriter, r *http.Request) {
 
 	commonCtx := common_ctx.GetFromCtx(ctx)
 
+	appSession := commonCtx.AppSession
+	if commonCtx.UserAuth.GUID != "" {
+		appSession = commonCtx.UserAuth.GUID
+	}
+
 	params := contract.RecordUserActivity{
 		UserGuid:   commonCtx.UserAuth.GUID,
-		AppSession: commonCtx.AppSession,
+		AppSession: appSession,
 	}
 
 	err := utils.BindJson(r, &params)
