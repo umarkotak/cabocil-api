@@ -16,6 +16,7 @@ const (
 	CHAT_LOG_EXPIRY                      = 30 * 24 * time.Hour // 30 days
 	CALL_EXPIRY                          = 90 * time.Second    //
 	PDF_MAX_FILE_SIZE_MB                 = 50 * (1 << 20)      // 50 mb
+	DEFAULT_IMAGE_CACHE_SECONDS          = 2592000             // 30 days in seconds = 30 * 24 * 60 * 60 = 2592000
 )
 
 const (

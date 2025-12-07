@@ -366,7 +366,7 @@ func UpdateBookCover(ctx context.Context, params contract.UpdateBookCover) error
 	}
 
 	if fileBucket.Metadata.Purpose == model.PURPOSE_BOOK_COVER && book.Storage == model.STORAGE_R2 {
-		err = datastore.UploadFileToR2(ctx, coverPath, coverObjectKey, true)
+		err = datastore.UploadFileToR2(ctx, coverPath, coverObjectKey, true, model.DEFAULT_IMAGE_CACHE_SECONDS)
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
 			return err
@@ -400,7 +400,7 @@ func UpdateBookCover(ctx context.Context, params contract.UpdateBookCover) error
 	}
 
 	if book.Storage == model.STORAGE_R2 {
-		err = datastore.UploadFileToR2(ctx, coverPath, coverObjectKey, true)
+		err = datastore.UploadFileToR2(ctx, coverPath, coverObjectKey, true, model.DEFAULT_IMAGE_CACHE_SECONDS)
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
 			return err

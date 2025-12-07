@@ -114,7 +114,7 @@ func InsertFromPdf(ctx context.Context, params contract.InsertFromPdf) error {
 	bookObjectKey := fmt.Sprintf("books/%s/book.pdf", params.Slug)
 	if params.Storage == model.STORAGE_R2 {
 		if params.StorePdf {
-			err = datastore.UploadFileToR2(ctx, pdfFilePath, bookObjectKey, false)
+			err = datastore.UploadFileToR2(ctx, pdfFilePath, bookObjectKey, false, model.DEFAULT_IMAGE_CACHE_SECONDS)
 			if err != nil {
 				logrus.WithContext(ctx).Error(err)
 				return err
@@ -209,7 +209,7 @@ func InsertFromPdf(ctx context.Context, params contract.InsertFromPdf) error {
 
 			bookContentObjectKey := fmt.Sprintf("books/%s/%04d.jpeg", params.Slug, idx+1)
 			if params.Storage == model.STORAGE_R2 {
-				err = datastore.UploadFileToR2(ctx, filePath, bookContentObjectKey, false)
+				err = datastore.UploadFileToR2(ctx, filePath, bookContentObjectKey, false, model.DEFAULT_IMAGE_CACHE_SECONDS)
 				if err != nil {
 					logrus.WithContext(ctx).Error(err)
 					return err
@@ -259,7 +259,9 @@ func InsertFromPdf(ctx context.Context, params contract.InsertFromPdf) error {
 		}
 		bookCoverObjectKey := fmt.Sprintf("books/%s/cover.%s", params.Slug, params.ImgFormat)
 		if params.Storage == model.STORAGE_R2 {
-			err = datastore.UploadFileToR2(ctx, fmt.Sprintf("%s/%s", config.Get().FileBucketPath, bookCoverObjectKey), bookCoverObjectKey, false)
+			err = datastore.UploadFileToR2(
+				ctx, fmt.Sprintf("%s/%s", config.Get().FileBucketPath, bookCoverObjectKey), bookCoverObjectKey, false, model.DEFAULT_IMAGE_CACHE_SECONDS,
+			)
 			if err != nil {
 				logrus.WithContext(ctx).Error(err)
 				return err

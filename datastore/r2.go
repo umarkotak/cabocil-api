@@ -14,7 +14,7 @@ import (
 	"github.com/umarkotak/ytkidd-api/config"
 )
 
-func UploadFileToR2(ctx context.Context, filePath, objectKey string, deleteAfterUpload bool) (err error) {
+func UploadFileToR2(ctx context.Context, filePath, objectKey string, deleteAfterUpload bool, cacheSecond uint) (err error) {
 	if filePath == "" {
 		return fmt.Errorf("filePath is required")
 	}
@@ -26,14 +26,19 @@ func UploadFileToR2(ctx context.Context, filePath, objectKey string, deleteAfter
 	if err != nil {
 		return fmt.Errorf("open file: %w", err)
 	}
-	// Single defer to both close and (optionally) delete the file.
+
+	// Defer closure to handle cleanup and error updating
 	defer func() {
-		// Always close the file; if close fails and we don't already have an error, return it.
-		if cerr := f.Close(); cerr != nil && err == nil {
+		// Always close the file first
+		cerr := f.Close()
+
+		// If the main logic succeeded but closing failed, return the close error
+		if err == nil && cerr != nil {
 			err = fmt.Errorf("close file: %w", cerr)
 			return
 		}
-		// Only delete if requested AND no prior error (i.e., upload succeeded).
+
+		// Only delete if requested AND no prior error (upload & close succeeded)
 		if deleteAfterUpload && err == nil {
 			if remErr := os.Remove(filePath); remErr != nil {
 				err = fmt.Errorf("remove file: %w", remErr)
@@ -43,20 +48,21 @@ func UploadFileToR2(ctx context.Context, filePath, objectKey string, deleteAfter
 
 	// Peek first 512 bytes to detect content-type
 	header := make([]byte, 512)
-	n, _ := io.ReadFull(f, header) // it's fine if less than 512; we use n
+	n, _ := io.ReadFull(f, header)
 	contentType := http.DetectContentType(header[:n])
 
-	// Reset reader
+	// Reset reader to the start
 	if _, err := f.Seek(0, io.SeekStart); err != nil {
 		return fmt.Errorf("seek file: %w", err)
 	}
 
 	_, err = dataStore.R2Manager.Upload(ctx, &s3.PutObjectInput{
-		Bucket:      aws.String(config.Get().R2BucketName),
-		Key:         aws.String(objectKey),
-		Body:        f,
-		ContentType: aws.String(contentType),
-		ACL:         types.ObjectCannedACLPublicRead,
+		Bucket:       aws.String(config.Get().R2BucketName),
+		Key:          aws.String(objectKey),
+		Body:         f,
+		ContentType:  aws.String(contentType),
+		ACL:          types.ObjectCannedACLPublicRead,
+		CacheControl: aws.String(fmt.Sprintf("max-age=%d", cacheSecond)),
 	})
 	if err != nil {
 		return fmt.Errorf("upload: %w", err)
