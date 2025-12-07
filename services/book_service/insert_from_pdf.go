@@ -23,7 +23,7 @@ import (
 
 const CAESIUMCLT_PATH = "/opt/homebrew/bin/caesiumclt"
 
-func InsertFromPdf(ctx context.Context, params contract.InsertFromPdf) error {
+func InsertFromPdf(ctx context.Context, params contract.InsertFromPdf, uploadState *model.UploadState) error {
 	var err error
 
 	if params.Storage == "" {
@@ -164,9 +164,19 @@ func InsertFromPdf(ctx context.Context, params contract.InsertFromPdf) error {
 			return err
 		}
 
-		logrus.Infof("MATCHES PAGE: %+v", matches)
+		// iterate each book page and save to storage
+		if uploadState != nil {
+			tempUploadState := uploadState.StatusMap[params.Slug]
+			tempUploadState.MaxPage = len(matches)
+			uploadState.StatusMap[params.Slug] = tempUploadState
+		}
 		for idx, filePath := range matches {
-			logrus.Infof("comporessing image start")
+			if uploadState != nil {
+				tempUploadState := uploadState.StatusMap[params.Slug]
+				tempUploadState.CurrentPage = idx + 1
+				uploadState.StatusMap[params.Slug] = tempUploadState
+			}
+
 			if params.ImgFormat == model.IMAGE_PNG {
 				cmdComp1 := exec.Command(
 					CAESIUMCLT_PATH, "--lossless",

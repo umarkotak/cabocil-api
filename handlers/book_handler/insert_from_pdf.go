@@ -16,20 +16,9 @@ import (
 	"github.com/umarkotak/ytkidd-api/utils/render"
 )
 
-type (
-	UploadState struct {
-		StatusMap map[string]UploadBookStatus `json:"status_map"`
-	}
-
-	UploadBookStatus struct {
-		Slug      string    `json:"slug"`
-		CreatedAt time.Time `json:"created_at"`
-	}
-)
-
 var (
-	uploadState = UploadState{
-		StatusMap: map[string]UploadBookStatus{},
+	uploadState = model.UploadState{
+		StatusMap: map[string]model.UploadBookStatus{},
 	}
 )
 
@@ -41,6 +30,11 @@ func GetBooksUploadStatus(w http.ResponseWriter, r *http.Request) {
 
 func InsertFromPdf(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+
+	if _, exists := uploadState.StatusMap[r.FormValue("slug")]; exists {
+		render.Error(w, r, fmt.Errorf("task is currently running for slug: %s", r.FormValue("slug")), "")
+		return
+	}
 
 	err := r.ParseMultipartForm(model.PDF_MAX_FILE_SIZE_MB)
 	if err != nil {
@@ -109,18 +103,19 @@ func InsertFromPdf(w http.ResponseWriter, r *http.Request) {
 	}
 
 	go func() {
-		uploadState.StatusMap[params.Slug] = UploadBookStatus{
-			Slug:      params.Slug,
-			CreatedAt: time.Now(),
+		uploadState.StatusMap[params.Slug] = model.UploadBookStatus{
+			Slug:        params.Slug,
+			CreatedAt:   time.Now(),
+			CurrentPage: 0,
+			MaxPage:     0,
 		}
 		defer func() {
 			delete(uploadState.StatusMap, params.Slug)
 		}()
 
-		err = book_service.InsertFromPdf(context.Background(), params)
+		err = book_service.InsertFromPdf(context.Background(), params, &uploadState)
 		if err != nil {
 			logrus.WithContext(context.Background()).Error(err)
-			// render.Error(w, r, err, "")
 			return
 		}
 	}()
@@ -153,7 +148,7 @@ func InsertFromPdfUrls(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
-			uploadState.StatusMap[oneParams.Slug] = UploadBookStatus{
+			uploadState.StatusMap[oneParams.Slug] = model.UploadBookStatus{
 				Slug:      oneParams.Slug,
 				CreatedAt: time.Now(),
 			}
@@ -199,7 +194,7 @@ func InsertFromPdfUrls(w http.ResponseWriter, r *http.Request) {
 				StorePdf:       oneParams.StorePdf,
 				Tags:           oneParams.Tags,
 			}
-			err = book_service.InsertFromPdf(bgCtx, insertFromPdfParams)
+			err = book_service.InsertFromPdf(bgCtx, insertFromPdfParams, &uploadState)
 			if err != nil {
 				logrus.WithContext(bgCtx).Error(err)
 				// render.Error(w, r, err, "")

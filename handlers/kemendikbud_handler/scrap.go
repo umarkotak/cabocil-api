@@ -174,7 +174,7 @@ func Scrap() {
 			StorePdf:       oneParams.StorePDF,
 			Tags:           oneParams.Tags,
 		}
-		err = book_service.InsertFromPdf(ctx, insertFromPdfParams)
+		err = book_service.InsertFromPdf(ctx, insertFromPdfParams, &model.UploadState{})
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
 			return
