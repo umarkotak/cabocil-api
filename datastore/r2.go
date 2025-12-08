@@ -31,6 +31,12 @@ func UploadFileToR2(ctx context.Context, filePath, objectKey string, deleteAfter
 
 	// Defer closure to handle cleanup and error updating
 	defer func() {
+		purgeErr := purgeCloudflareCache(ctx, objectKey)
+		if purgeErr != nil {
+			// Log error only, so we don't return an error for a successful upload
+			fmt.Printf("Warning: Failed to purge cache for %s: %v\n", objectKey, purgeErr)
+		}
+
 		// Always close the file first
 		cerr := f.Close()
 
@@ -69,16 +75,6 @@ func UploadFileToR2(ctx context.Context, filePath, objectKey string, deleteAfter
 	if err != nil {
 		return fmt.Errorf("upload: %w", err)
 	}
-
-	// --- NEW LOGIC: Purge Cache ---
-	// After successful upload, trigger the cache purge for this file.
-	// You might want to log the error rather than failing the whole request
-	// if the upload itself succeeded.
-	if purgeErr := purgeCloudflareCache(ctx, objectKey); purgeErr != nil {
-		// Log error only, so we don't return an error for a successful upload
-		fmt.Printf("Warning: Failed to purge cache for %s: %v\n", objectKey, purgeErr)
-	}
-	// ------------------------------
 
 	return nil
 }
@@ -173,10 +169,20 @@ type CloudflarePurgeReq struct {
 	Files []string `json:"files"`
 }
 
+//	curl https://api.cloudflare.com/client/v4/zones/$ZONE_ID/purge_cache \
+//		-H 'Content-Type: application/json' \
+//		-H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+//		-d '{
+//					"tags": [
+//						"a-cache-tag",
+//						"another-cache-tag"
+//					]
+//				}'
 func purgeCloudflareCache(ctx context.Context, objectKey string) error {
 	// 1. Construct the full public URL of the file
 	// Assuming config.Get().PublicDomain is something like "https://cdn.example.com"
 	fullURL := fmt.Sprintf("%s/%s", config.Get().R2PublicDomain, objectKey)
+	// logrus.Infof("attempt purging cache: %s", fullURL)
 
 	// 2. Prepare the payload
 	payload := CloudflarePurgeReq{
@@ -198,7 +204,7 @@ func purgeCloudflareCache(ctx context.Context, objectKey string) error {
 
 	// 4. Set Headers
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+config.Get().R2TokenValue)
+	req.Header.Set("Authorization", "Bearer "+config.Get().R2UserApiToken)
 
 	// 5. Execute Request
 	client := &http.Client{Timeout: 10 * time.Second}
@@ -214,5 +220,6 @@ func purgeCloudflareCache(ctx context.Context, objectKey string) error {
 		return fmt.Errorf("cloudflare api returned status: %d", resp.StatusCode)
 	}
 
+	// logrus.Infof("success purging cache: %s", fullURL)
 	return nil
 }

@@ -39,6 +39,7 @@ type (
 		R2StorageEndpoint   string
 		R2BucketName        string
 		R2PublicDomain      string
+		R2UserApiToken      string
 		CloudflareZoneId    string
 		CloudflareAccountId string
 	}

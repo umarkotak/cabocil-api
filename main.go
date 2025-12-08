@@ -182,8 +182,8 @@ func initializeHttpServer() {
 		chiMiddleware.RealIP,    //
 		chiMiddleware.Recoverer, //
 		middlewares.Cors,        //
-		middlewares.RequestLog,  //
-		middlewares.CommonCtx,   // it will extract headers and put the value to common context
+		// middlewares.RequestLog,  //
+		middlewares.CommonCtx, // it will extract headers and put the value to common context
 		// middlewares.ReqRateLimit(1000, 1*time.Second), // max 100 request per second based on X-Device-Id
 	)
 
