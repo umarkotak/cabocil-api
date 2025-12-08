@@ -240,8 +240,12 @@ func initializeHttpServer() {
 		ri.Post("/midtrans/callback/transaction", payment_lib.MidtransCallbackHandler)
 	})
 
+	const CacheHeader = "Cache-Control"
+	const CacheDuration = "public, max-age=2592000" // 30 days
 	r.Get("/file_bucket/*", func(w http.ResponseWriter, r *http.Request) {
-		http.StripPrefix("/file_bucket", http.FileServer(http.Dir(config.Get().FileBucketPath))).ServeHTTP(w, r)
+		w.Header().Set(CacheHeader, CacheDuration)
+		fs := http.StripPrefix("/file_bucket", http.FileServer(http.Dir(config.Get().FileBucketPath)))
+		fs.ServeHTTP(w, r)
 	})
 	r.Get("/comfy_ui_gallery/*", func(w http.ResponseWriter, r *http.Request) {
 		http.StripPrefix("/comfy_ui_gallery", http.FileServer(http.Dir(config.Get().ComfyUIOutputDir))).ServeHTTP(w, r)
