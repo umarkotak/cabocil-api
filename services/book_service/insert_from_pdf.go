@@ -32,6 +32,18 @@ func InsertFromPdf(ctx context.Context, params contract.InsertFromPdf, uploadSta
 	lastFour := unixStr[len(unixStr)-4:]
 	params.Slug = fmt.Sprintf("%s-%s", lastFour, params.Slug)
 
+	if uploadState != nil {
+		uploadState.StatusMap[params.Slug] = model.UploadBookStatus{
+			Slug:        params.Slug,
+			CreatedAt:   time.Now(),
+			CurrentPage: 0,
+			MaxPage:     0,
+		}
+		defer func() {
+			delete(uploadState.StatusMap, params.Slug)
+		}()
+	}
+
 	if params.Storage == "" {
 		params.Storage = model.STORAGE_LOCAL
 	}

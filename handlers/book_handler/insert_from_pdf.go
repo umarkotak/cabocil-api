@@ -103,16 +103,6 @@ func InsertFromPdf(w http.ResponseWriter, r *http.Request) {
 	}
 
 	go func() {
-		uploadState.StatusMap[params.Slug] = model.UploadBookStatus{
-			Slug:        params.Slug,
-			CreatedAt:   time.Now(),
-			CurrentPage: 0,
-			MaxPage:     0,
-		}
-		defer func() {
-			delete(uploadState.StatusMap, params.Slug)
-		}()
-
 		err = book_service.InsertFromPdf(context.Background(), params, &uploadState)
 		if err != nil {
 			logrus.WithContext(context.Background()).Error(err)
