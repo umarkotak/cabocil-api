@@ -46,12 +46,14 @@ func Initialize() {
 		MidtransClientKey:  os.Getenv("MIDTRANS_CLIENT_KEY"),
 		MidtransServerKey:  os.Getenv("MIDTRANS_SERVER_KEY"),
 
-		R2TokenValue:      os.Getenv("R2_TOKEN_VALUE"),
-		R2AccessKeyId:     os.Getenv("R2_ACCESS_KEY_ID"),
-		R2AccessKeySecret: os.Getenv("R2_ACCESS_KEY_SECRET"),
-		R2StorageEndpoint: os.Getenv("R2_STORAGE_ENDPOINT"),
-		R2BucketName:      getEnvStringWithDefault("R2_BUCKET_NAME", "cabocil-bucket"),
-		R2PublicDomain:    getEnvStringWithDefault("R2_PUBLIC_DOMAIN", "https://data.cabocil.com"),
+		R2TokenValue:        os.Getenv("R2_TOKEN_VALUE"),
+		R2AccessKeyId:       os.Getenv("R2_ACCESS_KEY_ID"),
+		R2AccessKeySecret:   os.Getenv("R2_ACCESS_KEY_SECRET"),
+		R2StorageEndpoint:   os.Getenv("R2_STORAGE_ENDPOINT"),
+		R2BucketName:        getEnvStringWithDefault("R2_BUCKET_NAME", "cabocil-bucket"),
+		R2PublicDomain:      getEnvStringWithDefault("R2_PUBLIC_DOMAIN", "https://data.cabocil.com"),
+		CloudflareZoneId:    os.Getenv("CLOUDFLARE_ZONE_ID"),
+		CloudflareAccountId: os.Getenv("CLOUDFLARE_ACCOUNT_ID"),
 	}
 }
 

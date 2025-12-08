@@ -33,11 +33,13 @@ type (
 		MidtransClientKey  string
 		MidtransServerKey  string
 
-		R2TokenValue      string
-		R2AccessKeyId     string
-		R2AccessKeySecret string
-		R2StorageEndpoint string
-		R2BucketName      string
-		R2PublicDomain    string
+		R2TokenValue        string
+		R2AccessKeyId       string
+		R2AccessKeySecret   string
+		R2StorageEndpoint   string
+		R2BucketName        string
+		R2PublicDomain      string
+		CloudflareZoneId    string
+		CloudflareAccountId string
 	}
 )

@@ -1,7 +1,9 @@
 package datastore
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -67,6 +69,16 @@ func UploadFileToR2(ctx context.Context, filePath, objectKey string, deleteAfter
 	if err != nil {
 		return fmt.Errorf("upload: %w", err)
 	}
+
+	// --- NEW LOGIC: Purge Cache ---
+	// After successful upload, trigger the cache purge for this file.
+	// You might want to log the error rather than failing the whole request
+	// if the upload itself succeeded.
+	if purgeErr := purgeCloudflareCache(ctx, objectKey); purgeErr != nil {
+		// Log error only, so we don't return an error for a successful upload
+		fmt.Printf("Warning: Failed to purge cache for %s: %v\n", objectKey, purgeErr)
+	}
+	// ------------------------------
 
 	return nil
 }
@@ -152,6 +164,54 @@ func DeleteObjectsByPrefix(ctx context.Context, prefix string) error {
 		if err != nil {
 			return fmt.Errorf("delete objects: %w", err)
 		}
+	}
+
+	return nil
+}
+
+type CloudflarePurgeReq struct {
+	Files []string `json:"files"`
+}
+
+func purgeCloudflareCache(ctx context.Context, objectKey string) error {
+	// 1. Construct the full public URL of the file
+	// Assuming config.Get().PublicDomain is something like "https://cdn.example.com"
+	fullURL := fmt.Sprintf("%s/%s", config.Get().R2PublicDomain, objectKey)
+
+	// 2. Prepare the payload
+	payload := CloudflarePurgeReq{
+		Files: []string{fullURL},
+	}
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("marshal payload: %w", err)
+	}
+
+	// 3. Create the HTTP Request to Cloudflare API
+	// API Endpoint: https://api.cloudflare.com/client/v4/zones/{zone_identifier}/purge_cache
+	url := fmt.Sprintf("https://api.cloudflare.com/client/v4/zones/%s/purge_cache", config.Get().CloudflareZoneId)
+
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonPayload))
+	if err != nil {
+		return fmt.Errorf("create request: %w", err)
+	}
+
+	// 4. Set Headers
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+config.Get().R2TokenValue)
+
+	// 5. Execute Request
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("execute request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	// 6. Check Response Status
+	if resp.StatusCode != http.StatusOK {
+		// You can read the body here to see the specific Cloudflare error if needed
+		return fmt.Errorf("cloudflare api returned status: %d", resp.StatusCode)
 	}
 
 	return nil
