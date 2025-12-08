@@ -12,6 +12,7 @@ import (
 	"github.com/umarkotak/ytkidd-api/services/youtube_channel_service"
 	"github.com/umarkotak/ytkidd-api/services/youtube_video_service"
 	"github.com/umarkotak/ytkidd-api/utils"
+	"github.com/umarkotak/ytkidd-api/utils/common_ctx"
 	"github.com/umarkotak/ytkidd-api/utils/render"
 )
 
@@ -36,6 +37,8 @@ func GetYoutubeChannels(w http.ResponseWriter, r *http.Request) {
 func GetYoutubeChannelDetail(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
+	commonCtx := common_ctx.GetFromCtx(ctx)
+
 	youtubeChannelID := utils.StringMustInt64(chi.URLParam(r, "id"))
 
 	youtubeChannel, err := youtube_channel_repo.GetByID(ctx, youtubeChannelID)
@@ -46,6 +49,8 @@ func GetYoutubeChannelDetail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	youtubeVideos, err := youtube_video_service.GetVideos(ctx, contract.GetYoutubeVideos{
+		UserGuid:   commonCtx.UserAuth.GUID,
+		UserRole:   commonCtx.UserAuth.UserRole,
 		ChannelIDs: []int64{youtubeChannelID},
 		Sort:       r.URL.Query().Get("sort"),
 		Pagination: model.Pagination{
