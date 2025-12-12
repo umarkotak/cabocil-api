@@ -20,6 +20,8 @@ type (
 		Tags         []string `json:"tags"`
 		Type         string   `json:"type"`
 		IsFree       bool     `json:"is_free"`
+		Active       bool     `json:"active"`
+		Storage      string   `json:"storage"`
 	}
 
 	BookDetail struct {
@@ -35,6 +37,9 @@ type (
 		AccessTags   []string      `json:"access_tags"`
 		PdfUrl       string        `json:"pdf_url"`
 		CanAction    bool          `json:"can_action"`
+		IsFree       bool          `json:"is_free"`
+		IsSubscribed bool          `json:"is_subscribed"`
+		MaxPage      int           `json:"max_page"`
 	}
 
 	BookContent struct {

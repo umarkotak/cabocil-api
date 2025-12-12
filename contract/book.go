@@ -44,6 +44,7 @@ type (
 		ExcludeAccess pq.StringArray `db:"exclude_access"`
 		Sort          string         `db:"sort"`
 		ExcludeIDs    pq.Int64Array  `db:"exclude_ids"`
+		Active        string         `db:"active"` // Enum: true, false, all
 		model.Pagination
 	}
 

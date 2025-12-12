@@ -61,7 +61,13 @@ var (
 			AND (:title = '' OR b.title ILIKE :title)
 			AND (:tags = '{}' OR b.tags && :tags)
 			AND (:types = '{}' OR b.type = ANY(:types))
-			AND b.active
+			AND (
+				CASE
+					WHEN :active = 'true' THEN b.active
+					WHEN :active = 'false' THEN NOT b.active
+					ELSE TRUE
+				END
+			)
 			AND b.deleted_at IS NULL
 			AND (:exclude_ids = '{}' OR NOT(b.id = ANY(:exclude_ids)))
 			AND (:access = '{}' OR b.access_tags && :access)
@@ -113,7 +119,8 @@ var (
 			pdf_file_guid = :pdf_file_guid,
 			original_pdf_url = :original_pdf_url,
 			access_tags = :access_tags,
-			storage = :storage
+			storage = :storage,
+			active = :active
 		WHERE
 			id = :id
 	`

@@ -2,6 +2,7 @@ package book_handler
 
 import (
 	"net/http"
+	"slices"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/sirupsen/logrus"
@@ -16,6 +17,12 @@ import (
 func GetBooks(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
+	commonCtx := common_ctx.GetFromCtx(ctx)
+	active := "true"
+	if slices.Contains(model.ADMIN_ROLES, commonCtx.UserAuth.UserRole) {
+		active = "all"
+	}
+
 	params := contract.GetBooks{
 		Title:         r.URL.Query().Get("title"),
 		Tags:          utils.StringMustSliceString(r.URL.Query().Get("tags"), ","),
@@ -24,6 +31,7 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 		ExcludeAccess: utils.StringMustSliceString(r.URL.Query().Get("exclude_access"), ","),
 		Sort:          r.URL.Query().Get("sort"),
 		ExcludeIDs:    utils.StringMustSliceInt64(r.URL.Query().Get("exclude_ids"), ","),
+		Active:        active,
 		Pagination: model.Pagination{
 			Limit: utils.StringMustInt64(r.URL.Query().Get("limit")),
 			Page:  utils.StringMustInt64(r.URL.Query().Get("page")),

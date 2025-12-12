@@ -17,6 +17,7 @@ const (
 	CALL_EXPIRY                          = 90 * time.Second    //
 	PDF_MAX_FILE_SIZE_MB                 = 50 * (1 << 20)      // 50 mb
 	DEFAULT_IMAGE_CACHE_SECONDS          = 2592000             // 30 days in seconds = 30 * 24 * 60 * 60 = 2592000
+	ALLOWED_PREMIUM_FREE_PAGE_COUNT      = 5
 )
 
 const (

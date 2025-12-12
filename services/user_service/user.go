@@ -17,7 +17,7 @@ import (
 )
 
 func SignIn(ctx context.Context, params contract.UserSignIn) (contract_resp.UserSignIn, error) {
-	logrus.Infof("GOOGLE TOKEN: %+v\n", params.GoogleCredential)
+	// logrus.Infof("GOOGLE TOKEN: %+v\n", params.GoogleCredential)
 
 	googleUser, err := google_repo.ValidateGoogleJWT(params.GoogleCredential)
 	if err != nil {
@@ -25,7 +25,7 @@ func SignIn(ctx context.Context, params contract.UserSignIn) (contract_resp.User
 		return contract_resp.UserSignIn{}, err
 	}
 
-	logrus.Infof("GOOGLE DATA: %+v\n", googleUser)
+	// logrus.Infof("GOOGLE DATA: %+v\n", googleUser)
 
 	user, err := user_repo.GetByEmail(ctx, googleUser.Email)
 	if err != nil && err != sql.ErrNoRows {

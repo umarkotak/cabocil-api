@@ -47,6 +47,8 @@ func GetBooks(ctx context.Context, params contract.GetBooks) (contract_resp.GetB
 			Tags:         book.Tags,
 			Type:         book.Type,
 			IsFree:       book.IsFree(),
+			Active:       book.Active,
+			Storage:      book.Storage,
 		}
 		bookDatas = append(bookDatas, bookData)
 	}
@@ -106,26 +108,21 @@ func GetBookDetail(ctx context.Context, params contract.GetBooks) (contract_resp
 		}
 	}
 
-	if !book.IsFree() {
-		if params.UserGuid == "" {
-			return contract_resp.BookDetail{}, model.ErrLoginRequired
-		}
+	user, err := user_repo.GetByGuid(ctx, params.UserGuid)
+	if err != nil && err != sql.ErrNoRows {
+		logrus.WithContext(ctx).Error(err)
+		return contract_resp.BookDetail{}, err
+	}
 
-		user, err := user_repo.GetByGuid(ctx, params.UserGuid)
-		if err != nil {
-			logrus.WithContext(ctx).Error(err)
-			return contract_resp.BookDetail{}, err
-		}
-
+	isSubscribed := false
+	if slices.Contains(model.ADMIN_ROLES, params.UserRole) {
+		isSubscribed = true
+	} else {
 		subs, err := user_subscription_repo.GetActiveByUserID(ctx, user.ID)
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
-			return contract_resp.BookDetail{}, err
 		}
-
-		if len(subs) <= 0 {
-			return contract_resp.BookDetail{}, model.ErrSubscriptionRequired
-		}
+		isSubscribed = len(subs) > 0
 	}
 
 	bookContents, err := book_content_repo.GetByBookID(ctx, book.ID)
@@ -134,8 +131,12 @@ func GetBookDetail(ctx context.Context, params contract.GetBooks) (contract_resp
 		return contract_resp.BookDetail{}, err
 	}
 
-	bookContentDatas := []contract_resp.BookContent{}
-	for _, bookContent := range bookContents {
+	bookContentDatas := make([]contract_resp.BookContent, 0, len(bookContents))
+	lastIndex := len(bookContents)
+	if !book.IsFree() && !isSubscribed {
+		lastIndex = model.ALLOWED_PREMIUM_FREE_PAGE_COUNT
+	}
+	for _, bookContent := range bookContents[0:lastIndex] {
 		bookContentData := contract_resp.BookContent{
 			ID:           bookContent.ID,
 			BookID:       bookContent.BookID,
@@ -165,8 +166,12 @@ func GetBookDetail(ctx context.Context, params contract.GetBooks) (contract_resp
 		Type:         book.Type,
 		AccessTags:   book.AccessTags,
 		Contents:     bookContentDatas,
+		Active:       book.Active,
 		PdfUrl:       pdfUrl,
 		CanAction:    slices.Contains(model.ADMIN_ROLES, params.UserRole),
+		IsFree:       book.IsFree(),
+		IsSubscribed: isSubscribed,
+		MaxPage:      len(bookContents),
 	}
 
 	return bookDetail, nil
