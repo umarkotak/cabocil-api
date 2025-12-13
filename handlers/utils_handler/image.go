@@ -17,7 +17,9 @@ import (
 )
 
 const (
-	CacheQuality = 75
+	CacheQuality  = 75
+	CacheHeader   = "Cache-Control"
+	CacheDuration = "public, max-age=2592000" // 30 days
 )
 
 func CompressHandler(w http.ResponseWriter, r *http.Request) {
@@ -41,6 +43,7 @@ func CompressHandler(w http.ResponseWriter, r *http.Request) {
 	// If file exists, serve it directly.
 	if _, err := os.Stat(cachePath); err == nil {
 		// http.ServeFile handles ETag, Last-Modified, and Range requests automatically.
+		w.Header().Set(CacheHeader, CacheDuration)
 		w.Header().Set("X-Cache-Status", "HIT")
 		http.ServeFile(w, r, cachePath)
 		return
@@ -100,6 +103,7 @@ func CompressHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 6. SERVE THE NEW FILE
+	w.Header().Set(CacheHeader, CacheDuration)
 	w.Header().Set("X-Cache-Status", "MISS")
 	http.ServeFile(w, r, cachePath)
 }

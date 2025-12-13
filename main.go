@@ -246,6 +246,7 @@ func initializeHttpServer() {
 	const CacheHeader = "Cache-Control"
 	const CacheDuration = "public, max-age=2592000" // 30 days
 	r.Get("/file_bucket/*", func(w http.ResponseWriter, r *http.Request) {
+		// logrus.Infof("Image HIT")
 		w.Header().Set(CacheHeader, CacheDuration)
 		fs := http.StripPrefix("/file_bucket", http.FileServer(http.Dir(config.Get().FileBucketPath)))
 		fs.ServeHTTP(w, r)
