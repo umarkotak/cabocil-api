@@ -12,6 +12,7 @@ type (
 		ChatWebsocketHost string //
 		YoutubeApiKey     string //
 		FileBucketPath    string //
+		CacheDirPath      string //
 		OllamaHost        string //
 		ComfyUIOutputDir  string
 

@@ -30,6 +30,7 @@ type (
 		Title        string        `json:"title"`
 		Description  string        `json:"description"`
 		CoverFileUrl string        `json:"cover_file_url"`
+		ThumbnailUrl string        `json:"thumbnail_url"`
 		Tags         []string      `json:"tags"`
 		Type         string        `json:"type"`
 		Contents     []BookContent `json:"contents"`
@@ -47,6 +48,7 @@ type (
 		BookID       int64  `json:"book_id"`
 		PageNumber   int64  `json:"page_number"`
 		ImageFileUrl string `json:"image_file_url"`
+		ThumbnailUrl string `json:"thumbnail_url"`
 		Description  string `json:"description"`
 	}
 )

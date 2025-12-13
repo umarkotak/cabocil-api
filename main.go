@@ -22,6 +22,7 @@ import (
 	"github.com/umarkotak/ytkidd-api/handlers/ping_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/product_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/user_handler"
+	"github.com/umarkotak/ytkidd-api/handlers/utils_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/youtube_channel_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/youtube_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/youtube_video_handler"
@@ -238,6 +239,8 @@ func initializeHttpServer() {
 		rOptionalUserAuth.Post("/user/activity", user_handler.PostUserActivity)
 
 		ri.Post("/midtrans/callback/transaction", payment_lib.MidtransCallbackHandler)
+
+		ri.Get("/utils/image/compress", utils_handler.CompressHandler)
 	})
 
 	const CacheHeader = "Cache-Control"

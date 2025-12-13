@@ -25,6 +25,7 @@ func Initialize() {
 		ChatWebsocketHost: getEnvStringWithDefault("CHAT_WEBSOCKET_HOST", "ws://localhost:33000/jodoh-express/api/chat/websocket/connect"),
 		YoutubeApiKey:     os.Getenv("YOUTUBE_API_KEY"),
 		FileBucketPath:    getEnvStringWithDefault("FILE_BUCKET_PATH", "file_bucket"),
+		CacheDirPath:      getEnvStringWithDefault("CACHE_DIR_PATH", "file_bucket/cache"),
 		OllamaHost:        getEnvStringWithDefault("OLLAMA_HOST", "http://localhost:11434"),
 		ComfyUIOutputDir:  getEnvStringWithDefault("COMFY_UI_OUTPUT_DIR", "/Users/umar/umar/personal_project/dev-notes/local_app/ComfyUI/output"),
 

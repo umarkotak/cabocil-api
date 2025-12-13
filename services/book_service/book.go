@@ -137,12 +137,15 @@ func GetBookDetail(ctx context.Context, params contract.GetBooks) (contract_resp
 		lastIndex = model.ALLOWED_PREMIUM_FREE_PAGE_COUNT
 	}
 	for _, bookContent := range bookContents[0:lastIndex] {
+		imageFileUrl := file_bucket.GenFinalUrl(ctx, book.Storage, bookContent.ImageFilePath)
+
 		bookContentData := contract_resp.BookContent{
 			ID:           bookContent.ID,
 			BookID:       bookContent.BookID,
 			PageNumber:   bookContent.PageNumber,
-			ImageFileUrl: file_bucket.GenFinalUrl(ctx, book.Storage, bookContent.ImageFilePath),
+			ImageFileUrl: imageFileUrl,
 			Description:  bookContent.Description,
+			ThumbnailUrl: file_bucket.GenCacheUrl(imageFileUrl, "480", "720"),
 		}
 
 		bookContentDatas = append(bookContentDatas, bookContentData)
@@ -156,12 +159,14 @@ func GetBookDetail(ctx context.Context, params contract.GetBooks) (contract_resp
 	// 	pdfUrl = utils.GenRawFileUrl(config.Get().FileBucketPath, book.PdfFileGuid)
 	// }
 
+	coverFileUrl := file_bucket.GenFinalUrl(ctx, book.Storage, book.CoverFilePath)
 	bookDetail := contract_resp.BookDetail{
 		ID:           book.ID,
 		Slug:         book.Slug,
 		Title:        book.Title,
 		Description:  book.Description,
-		CoverFileUrl: file_bucket.GenFinalUrl(ctx, book.Storage, book.CoverFilePath),
+		CoverFileUrl: coverFileUrl,
+		ThumbnailUrl: file_bucket.GenCacheUrl(coverFileUrl, "480", "720"),
 		Tags:         book.Tags,
 		Type:         book.Type,
 		AccessTags:   book.AccessTags,
