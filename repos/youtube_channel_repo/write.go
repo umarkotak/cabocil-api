@@ -51,6 +51,27 @@ func Update(ctx context.Context, tx *sqlx.Tx, youtubeChannel model.YoutubeChanne
 	return nil
 }
 
+func UpdateActive(ctx context.Context, tx *sqlx.Tx, youtubeChannel model.YoutubeChannel) error {
+	var err error
+
+	stmt := stmtUpdateActive
+	if tx != nil {
+		stmt, err = tx.PrepareNamedContext(ctx, queryUpdateActive)
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			return err
+		}
+	}
+
+	_, err = stmt.ExecContext(ctx, youtubeChannel)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return err
+	}
+
+	return nil
+}
+
 func SoftDelete(ctx context.Context, tx *sqlx.Tx, id int64) error {
 	var err error
 

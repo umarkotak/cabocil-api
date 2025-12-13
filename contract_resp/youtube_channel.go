@@ -6,11 +6,13 @@ import (
 
 type (
 	YoutubeChannel struct {
-		ID         int64    `json:"id"`
-		ExternalID string   `json:"external_id"`
-		ImageUrl   string   `json:"image_url"`
-		Name       string   `json:"name"`
-		Tags       []string `json:"tags"`
+		ID         int64     `json:"id"`
+		ExternalID string    `json:"external_id"`
+		ImageUrl   string    `json:"image_url"`
+		Name       string    `json:"name"`
+		Tags       []string  `json:"tags"`
+		Active     bool      `json:"active"`
+		UpdatedAt  time.Time `json:"updated_at"`
 	}
 
 	YoutubeChannelDetailed struct {

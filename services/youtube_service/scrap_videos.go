@@ -32,7 +32,7 @@ func ScrapVideos(ctx context.Context, params contract.ScrapVideos) (string, bool
 							Type("video").               //
 							PageToken(params.PageToken). //
 							MaxResults(50).              // Get up to 50 results.
-							Order("date")                //
+							Order("date")                // Newest videos first
 
 	response, err := call.Do()
 	if err != nil {

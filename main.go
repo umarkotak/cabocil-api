@@ -203,6 +203,7 @@ func initializeHttpServer() {
 		rOptionalUserAuth.Get("/youtube_channel/{id}", youtube_channel_handler.GetYoutubeChannelDetail)
 		rAdminAuth.Get("/youtube_channel/{id}/detailed", youtube_channel_handler.GetYoutubeChannelDetailed)
 		rAdminAuth.Patch("/youtube_channel/{id}", youtube_channel_handler.UpdateYoutubeChannel)
+		rAdminAuth.Patch("/youtube_channel/{id}/active", youtube_channel_handler.UpdateYoutubeChannelActive)
 		rAdminAuth.Delete("/youtube_channel/{id}", youtube_channel_handler.DeleteYoutubeChannel)
 
 		rAdminAuth.Post("/youtube/scrap_videos", youtube_handler.ScrapVideos)

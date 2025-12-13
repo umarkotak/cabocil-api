@@ -50,7 +50,13 @@ var (
 			1 = 1
 			AND (:name = '' OR ytch.name = :name)
 			AND (:tags = '{}' OR ytch.tags @> :tags)
-			AND ytch.active
+			AND (
+				CASE
+					WHEN :active = 'true' THEN ytch.active
+					WHEN :active = 'false' THEN NOT ytch.active
+					ELSE TRUE
+				END
+			)
 			AND ytch.deleted_at IS NULL
 		ORDER BY ytch.name ASC
 	`, allColumns)
@@ -81,7 +87,16 @@ var (
 			image_url = :image_url,
 			tags = :tags,
 			active = :active,
-			channel_link = :channel_link
+			channel_link = :channel_link,
+			updated_at = NOW()
+		WHERE
+			id = :id
+	`
+
+	queryUpdateActive = `
+		UPDATE youtube_channels
+		SET
+			active = :active
 		WHERE
 			id = :id
 	`
@@ -107,6 +122,7 @@ var (
 	stmtGetForSearch    *sqlx.NamedStmt
 	stmtInsert          *sqlx.NamedStmt
 	stmtUpdate          *sqlx.NamedStmt
+	stmtUpdateActive    *sqlx.NamedStmt
 	stmtSoftDelete      *sqlx.NamedStmt
 	stmtDelete          *sqlx.NamedStmt
 )
@@ -131,6 +147,10 @@ func Initialize() {
 		logrus.Fatal(err)
 	}
 	stmtUpdate, err = datastore.Get().Db.PrepareNamed(queryUpdate)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	stmtUpdateActive, err = datastore.Get().Db.PrepareNamed(queryUpdateActive)
 	if err != nil {
 		logrus.Fatal(err)
 	}

@@ -6,8 +6,9 @@ import (
 
 type (
 	GetYoutubeChannels struct {
-		Name string         `db:"name"`
-		Tags pq.StringArray `db:"tags"`
+		Name   string         `db:"name"`
+		Tags   pq.StringArray `db:"tags"`
+		Active string         `db:"active"`
 	}
 
 	UpdateYoutubeChannel struct {

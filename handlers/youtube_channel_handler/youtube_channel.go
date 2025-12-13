@@ -2,6 +2,7 @@ package youtube_channel_handler
 
 import (
 	"net/http"
+	"slices"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/sirupsen/logrus"
@@ -19,9 +20,16 @@ import (
 func GetYoutubeChannels(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
+	commonCtx := common_ctx.GetFromCtx(ctx)
+	active := "true"
+	if slices.Contains(model.ADMIN_ROLES, commonCtx.UserAuth.UserRole) {
+		active = "all"
+	}
+
 	params := contract.GetYoutubeChannels{
-		Name: r.URL.Query().Get("name"),
-		Tags: utils.StringMustSliceString(r.URL.Query().Get("tags"), ","),
+		Name:   r.URL.Query().Get("name"),
+		Tags:   utils.StringMustSliceString(r.URL.Query().Get("tags"), ","),
+		Active: active,
 	}
 
 	youtubeChannels, err := youtube_channel_service.GetChannels(ctx, params)
@@ -117,6 +125,29 @@ func UpdateYoutubeChannel(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = youtube_channel_service.UpdateChannel(ctx, params)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		render.Error(w, r, err, "")
+		return
+	}
+
+	render.Response(w, r, 200, map[string]any{})
+}
+
+func UpdateYoutubeChannelActive(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	params := contract.UpdateYoutubeChannel{
+		ID: utils.StringMustInt64(chi.URLParam(r, "id")),
+	}
+	err := utils.BindJson(r, &params)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		render.Error(w, r, err, "")
+		return
+	}
+
+	err = youtube_channel_service.UpdateChannelActive(ctx, params)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		render.Error(w, r, err, "")

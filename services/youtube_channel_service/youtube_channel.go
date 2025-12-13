@@ -8,6 +8,7 @@ import (
 	"github.com/umarkotak/ytkidd-api/contract"
 	"github.com/umarkotak/ytkidd-api/contract_resp"
 	"github.com/umarkotak/ytkidd-api/datastore"
+	"github.com/umarkotak/ytkidd-api/model"
 	"github.com/umarkotak/ytkidd-api/repos/user_activity_repo"
 	"github.com/umarkotak/ytkidd-api/repos/youtube_channel_repo"
 	"github.com/umarkotak/ytkidd-api/repos/youtube_video_repo"
@@ -29,6 +30,8 @@ func GetChannels(ctx context.Context, params contract.GetYoutubeChannels) ([]con
 			Name:       youtubeChannel.Name,
 			Tags:       youtubeChannel.Tags,
 			ExternalID: youtubeChannel.ExternalID,
+			Active:     youtubeChannel.Active,
+			UpdatedAt:  youtubeChannel.UpdatedAt,
 		})
 	}
 
@@ -50,6 +53,19 @@ func UpdateChannel(ctx context.Context, params contract.UpdateYoutubeChannel) er
 	youtubeChannel.ChannelLink = params.ChannelLink
 
 	err = youtube_channel_repo.Update(ctx, nil, youtubeChannel)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return err
+	}
+
+	return nil
+}
+
+func UpdateChannelActive(ctx context.Context, params contract.UpdateYoutubeChannel) error {
+	err := youtube_channel_repo.UpdateActive(ctx, nil, model.YoutubeChannel{
+		ID:     params.ID,
+		Active: params.Active,
+	})
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return err
