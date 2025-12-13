@@ -12,6 +12,7 @@ import (
 	"strconv"
 
 	"github.com/disintegration/imaging"
+	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/ytkidd-api/config"
 )
 
@@ -78,6 +79,7 @@ func CompressHandler(w http.ResponseWriter, r *http.Request) {
 	// from reading a file that is currently being written (corrupt image).
 	tempFile, err := os.CreateTemp(config.Get().CacheDirPath, "temp-*.jpg")
 	if err != nil {
+		logrus.Error(err)
 		http.Error(w, "Cache write error", http.StatusInternalServerError)
 		return
 	}

@@ -145,7 +145,7 @@ func GetBookDetail(ctx context.Context, params contract.GetBooks) (contract_resp
 			PageNumber:   bookContent.PageNumber,
 			ImageFileUrl: imageFileUrl,
 			Description:  bookContent.Description,
-			ThumbnailUrl: file_bucket.GenCacheUrl(imageFileUrl, "480", "720"),
+			ThumbnailUrl: file_bucket.GenCacheUrl(imageFileUrl, model.THUMBNAIL_WIDTH, model.THUMBNAIL_HEIGHT),
 		}
 
 		bookContentDatas = append(bookContentDatas, bookContentData)
@@ -166,7 +166,7 @@ func GetBookDetail(ctx context.Context, params contract.GetBooks) (contract_resp
 		Title:        book.Title,
 		Description:  book.Description,
 		CoverFileUrl: coverFileUrl,
-		ThumbnailUrl: file_bucket.GenCacheUrl(coverFileUrl, "480", "720"),
+		ThumbnailUrl: file_bucket.GenCacheUrl(coverFileUrl, model.THUMBNAIL_WIDTH, model.THUMBNAIL_HEIGHT),
 		Tags:         book.Tags,
 		Type:         book.Type,
 		AccessTags:   book.AccessTags,

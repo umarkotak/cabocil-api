@@ -18,6 +18,8 @@ const (
 	PDF_MAX_FILE_SIZE_MB                 = 50 * (1 << 20)      // 50 mb
 	DEFAULT_IMAGE_CACHE_SECONDS          = 2592000             // 30 days in seconds = 30 * 24 * 60 * 60 = 2592000
 	ALLOWED_PREMIUM_FREE_PAGE_COUNT      = 5
+	THUMBNAIL_WIDTH                      = 240
+	THUMBNAIL_HEIGHT                     = 320
 )
 
 const (
