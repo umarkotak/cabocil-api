@@ -22,6 +22,7 @@ type (
 		IsFree       bool     `json:"is_free"`
 		Active       bool     `json:"active"`
 		Storage      string   `json:"storage"`
+		ContentCount int64    `json:"content_count"`
 	}
 
 	BookDetail struct {

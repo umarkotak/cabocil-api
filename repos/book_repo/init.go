@@ -53,7 +53,8 @@ var (
 	queryGetByParams = fmt.Sprintf(`
 		SELECT
 			%s,
-			COALESCE(fb.exact_path, '') AS cover_file_path
+			COALESCE(fb.exact_path, '') AS cover_file_path,
+			( SELECT COUNT(1) FROM book_contents WHERE book_contents.book_id = b.id ) AS content_count
 		FROM books b
 		LEFT JOIN file_bucket fb ON fb.guid = b.cover_file_guid
 		WHERE

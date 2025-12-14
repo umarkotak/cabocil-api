@@ -51,6 +51,7 @@ func GetBooks(ctx context.Context, params contract.GetBooks) (contract_resp.GetB
 			IsFree:       book.IsFree(),
 			Active:       book.Active,
 			Storage:      book.Storage,
+			ContentCount: book.ContentCount.Int64,
 		}
 		bookDatas = append(bookDatas, bookData)
 	}

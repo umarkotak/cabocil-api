@@ -37,7 +37,8 @@ type (
 		AccessTags     pq.StringArray `db:"access_tags"`
 		Storage        string         `db:"storage"`
 
-		CoverFilePath string `db:"cover_file_path"` // join from file bucket
+		CoverFilePath string        `db:"cover_file_path"` // join from file bucket
+		ContentCount  sql.NullInt64 `db:"content_count"`   // join from book contents
 	}
 )
 
