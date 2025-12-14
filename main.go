@@ -242,13 +242,12 @@ func initializeHttpServer() {
 		ri.Post("/midtrans/callback/transaction", payment_lib.MidtransCallbackHandler)
 
 		ri.Get("/utils/image/compress", utils_handler.CompressHandler)
+		ri.Delete("/utils/image/cache", utils_handler.DeleteCacheHandler)
 	})
 
-	const CacheHeader = "Cache-Control"
-	const CacheDuration = "public, max-age=2592000" // 30 days
 	r.Get("/file_bucket/*", func(w http.ResponseWriter, r *http.Request) {
 		// logrus.Infof("Image HIT")
-		w.Header().Set(CacheHeader, CacheDuration)
+		w.Header().Set(model.ImgCacheHeader, model.ImgCacheDuration7Days)
 		fs := http.StripPrefix("/file_bucket", http.FileServer(http.Dir(config.Get().FileBucketPath)))
 		fs.ServeHTTP(w, r)
 	})

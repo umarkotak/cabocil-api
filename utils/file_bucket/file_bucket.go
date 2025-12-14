@@ -49,8 +49,8 @@ func GenFinalUrl(ctx context.Context, storageType, coverFilePath string) string 
 	return coverFileUrl
 }
 
-func GenCacheUrl(url string, widht, height int) string {
-	return fmt.Sprintf("%s/ytkidd/api/utils/image/compress?url=%s&w=%v&h=%v", config.Get().AppHost, url, widht, height)
+func GenCacheUrl(url, preset string, width, height int) string {
+	return fmt.Sprintf("%s/ytkidd/api/utils/image/compress?url=%s&w=%v&h=%v&preset=%s", config.Get().AppHost, url, width, height, preset)
 }
 
 func DeleteFileIfExists(filePath string) error {

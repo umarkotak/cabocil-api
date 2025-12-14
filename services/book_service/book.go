@@ -38,12 +38,14 @@ func GetBooks(ctx context.Context, params contract.GetBooks) (contract_resp.GetB
 
 	bookDatas := []contract_resp.Book{}
 	for _, book := range books {
+		coverFileUrl := file_bucket.GenFinalUrl(ctx, book.Storage, book.CoverFilePath)
+
 		bookData := contract_resp.Book{
 			ID:           book.ID,
 			Slug:         book.Slug,
 			Title:        book.Title,
 			Description:  book.Description,
-			CoverFileUrl: file_bucket.GenFinalUrl(ctx, book.Storage, book.CoverFilePath),
+			CoverFileUrl: file_bucket.GenCacheUrl(coverFileUrl, model.PRESET_COVER, 0, 0),
 			Tags:         book.Tags,
 			Type:         book.Type,
 			IsFree:       book.IsFree(),
@@ -145,7 +147,7 @@ func GetBookDetail(ctx context.Context, params contract.GetBooks) (contract_resp
 			PageNumber:   bookContent.PageNumber,
 			ImageFileUrl: imageFileUrl,
 			Description:  bookContent.Description,
-			ThumbnailUrl: file_bucket.GenCacheUrl(imageFileUrl, model.THUMBNAIL_WIDTH, model.THUMBNAIL_HEIGHT),
+			ThumbnailUrl: file_bucket.GenCacheUrl(imageFileUrl, model.PRESET_THUMBNAIL, 0, 0),
 		}
 
 		bookContentDatas = append(bookContentDatas, bookContentData)
@@ -166,7 +168,7 @@ func GetBookDetail(ctx context.Context, params contract.GetBooks) (contract_resp
 		Title:        book.Title,
 		Description:  book.Description,
 		CoverFileUrl: coverFileUrl,
-		ThumbnailUrl: file_bucket.GenCacheUrl(coverFileUrl, model.THUMBNAIL_WIDTH, model.THUMBNAIL_HEIGHT),
+		ThumbnailUrl: file_bucket.GenCacheUrl(coverFileUrl, model.PRESET_COVER, 0, 0),
 		Tags:         book.Tags,
 		Type:         book.Type,
 		AccessTags:   book.AccessTags,
@@ -355,6 +357,12 @@ func UpdateBookCover(ctx context.Context, params contract.UpdateBookCover) error
 		return err
 	}
 
+	coverFileUrl := file_bucket.GenFinalUrl(ctx, book.Storage, book.CoverFilePath)
+	err = datastore.DeleteCache(coverFileUrl, model.PRESET_COVER, "", "")
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+	}
+
 	fileBucket, err := file_bucket_repo.GetByGuid(ctx, book.CoverFileGuid)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
@@ -385,7 +393,7 @@ func UpdateBookCover(ctx context.Context, params contract.UpdateBookCover) error
 	}
 
 	if fileBucket.Metadata.Purpose == model.PURPOSE_BOOK_COVER && book.Storage == model.STORAGE_R2 {
-		err = datastore.UploadFileToR2(ctx, coverPath, coverObjectKey, true, model.DEFAULT_IMAGE_CACHE_SECONDS)
+		err = datastore.UploadFileToR2(ctx, coverPath, coverObjectKey, true, model.DEFAULT_R2_IMAGE_CACHE_SECONDS)
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
 			return err
@@ -419,7 +427,7 @@ func UpdateBookCover(ctx context.Context, params contract.UpdateBookCover) error
 	}
 
 	if book.Storage == model.STORAGE_R2 {
-		err = datastore.UploadFileToR2(ctx, coverPath, coverObjectKey, true, model.DEFAULT_IMAGE_CACHE_SECONDS)
+		err = datastore.UploadFileToR2(ctx, coverPath, coverObjectKey, true, model.DEFAULT_R2_IMAGE_CACHE_SECONDS)
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
 			return err

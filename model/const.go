@@ -16,10 +16,12 @@ const (
 	CHAT_LOG_EXPIRY                      = 30 * 24 * time.Hour // 30 days
 	CALL_EXPIRY                          = 90 * time.Second    //
 	PDF_MAX_FILE_SIZE_MB                 = 50 * (1 << 20)      // 50 mb
-	DEFAULT_IMAGE_CACHE_SECONDS          = 2592000             // 30 days in seconds = 30 * 24 * 60 * 60 = 2592000
+	DEFAULT_R2_IMAGE_CACHE_SECONDS       = 2592000             // 30 days in seconds = 30 * 24 * 60 * 60 = 2592000
 	ALLOWED_PREMIUM_FREE_PAGE_COUNT      = 5
-	THUMBNAIL_WIDTH                      = 240
-	THUMBNAIL_HEIGHT                     = 320
+	ImgCacheHeader                       = "Cache-Control"
+	ImgCacheDuration30Days               = "public, max-age=2592000" // 30 days
+	ImgCacheDuration7Days                = "public, max-age=604800"  // 7 days
+
 )
 
 const (
@@ -44,11 +46,22 @@ const (
 
 	CALL_TYPE_VIDEO = "video"
 	CALL_TYPE_VOICE = "voice"
+
+	PRESET_COVER     = "cover"
+	PRESET_THUMBNAIL = "thumbnail"
 )
 
 var (
 	OS_TO_PAYMENT_PLATFORM_MAP = map[string]string{
 		OS_ANDROID: PAYMENT_PLATFORM_PLAYSTORE,
 		OS_IOS:     PAYMENT_PLATFORM_APPSTORE,
+	}
+
+	Presets = map[string]struct {
+		Width  int
+		Height int
+	}{
+		PRESET_COVER:     {Width: 480, Height: 640},
+		PRESET_THUMBNAIL: {Width: 240, Height: 320},
 	}
 )
