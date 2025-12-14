@@ -38,5 +38,11 @@ start:
 stop:
 	sudo launchctl stop com.cabocil-api
 
+deploy:
+	git pull --rebase origin master
+	make bin
+	make stop
+	make start
+
 status:
 	sudo lsof -i :33000
