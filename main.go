@@ -20,6 +20,7 @@ import (
 	"github.com/umarkotak/ytkidd-api/handlers/kemendikbud_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/order_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/ping_handler"
+	"github.com/umarkotak/ytkidd-api/handlers/poki_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/product_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/user_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/utils_handler"
@@ -176,6 +177,8 @@ func initializeDependencies() {
 }
 
 func initializeHttpServer() {
+	poki_handler.Initialize()
+
 	r := chi.NewRouter()
 
 	r.Use(
@@ -240,6 +243,9 @@ func initializeHttpServer() {
 		rOptionalUserAuth.Post("/user/activity", user_handler.PostUserActivity)
 
 		ri.Post("/midtrans/callback/transaction", payment_lib.MidtransCallbackHandler)
+
+		ri.Get("/poki/games", poki_handler.GetGameList)
+		ri.Get("/poki/games/detail", poki_handler.GetGameDetail)
 
 		ri.Get("/utils/image/compress", utils_handler.CompressHandler)
 		ri.Delete("/utils/image/cache", utils_handler.DeleteCacheHandler)
