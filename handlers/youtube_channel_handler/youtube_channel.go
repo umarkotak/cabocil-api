@@ -46,6 +46,10 @@ func GetYoutubeChannelDetail(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	commonCtx := common_ctx.GetFromCtx(ctx)
+	active := "true"
+	if slices.Contains(model.ADMIN_ROLES, commonCtx.UserAuth.UserRole) {
+		active = "all"
+	}
 
 	youtubeChannelID := utils.StringMustInt64(chi.URLParam(r, "id"))
 
@@ -61,6 +65,7 @@ func GetYoutubeChannelDetail(w http.ResponseWriter, r *http.Request) {
 		UserRole:   commonCtx.UserAuth.UserRole,
 		ChannelIDs: []int64{youtubeChannelID},
 		Sort:       r.URL.Query().Get("sort"),
+		Active:     active,
 		Pagination: model.Pagination{
 			Limit: utils.StringMustInt64(r.URL.Query().Get("limit")),
 			Page:  utils.StringMustInt64(r.URL.Query().Get("page")),

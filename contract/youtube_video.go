@@ -20,6 +20,7 @@ type (
 		ExcludeIDs        pq.Int64Array  `db:"exclude_ids"`
 		ExcludeChannelIDs pq.Int64Array  `db:"exclude_channel_ids"`
 		Sort              string         `db:"sort"`
+		Active            string         `db:"active"`
 		model.Pagination
 	}
 )

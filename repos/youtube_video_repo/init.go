@@ -81,6 +81,13 @@ var (
 			AND (:exclude_ids = '{}' OR ytvid.id != ANY(:exclude_ids))
 			AND (:exclude_channel_ids = '{}' OR NOT(ytch.id = ANY(:exclude_channel_ids)))
 			AND (:channel_ids = '{}' OR ytch.id = ANY(:channel_ids))
+			AND (
+				CASE
+					WHEN :active = 'true' THEN ytch.active
+					WHEN :active = 'false' THEN NOT ytch.active
+					ELSE TRUE
+				END
+			)
 		ORDER BY
 			CASE WHEN :sort = 'title_asc' THEN ytvid.title END ASC,
 			CASE WHEN :sort = 'title_desc' THEN ytvid.title END DESC,
