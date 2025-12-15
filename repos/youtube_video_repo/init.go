@@ -76,7 +76,6 @@ var (
 			AND ytvid.deleted_at IS NULL
 			AND ytch.deleted_at IS NULL
 			AND ytvid.active
-			AND ytch.active
 			AND (:tags = '{}' OR ytch.tags @> :tags)
 			AND (:exclude_ids = '{}' OR ytvid.id != ANY(:exclude_ids))
 			AND (:exclude_channel_ids = '{}' OR NOT(ytch.id = ANY(:exclude_channel_ids)))
