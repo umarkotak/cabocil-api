@@ -35,6 +35,7 @@ type (
 		DeletedAt sql.NullTime `db:"deleted_at"`
 
 		UserID               int64                `db:"user_id"`
+		UserEmail            sql.NullString       `db:"user_email"`
 		AppSession           string               `db:"app_session"`
 		YoutubeVideoID       int64                `db:"youtube_video_id"`
 		BookID               int64                `db:"book_id"`

@@ -12,4 +12,11 @@ type (
 	UserSignIn struct {
 		GoogleCredential string `json:"google_credential"`
 	}
+
+	UserGetParams struct {
+		Guid     string `db:"guid"`
+		Email    string `db:"email"`
+		Name     string `db:"name"`
+		Username string `db:"username"`
+	}
 )

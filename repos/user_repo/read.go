@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/ytkidd-api/contract"
 	"github.com/umarkotak/ytkidd-api/model"
 )
 
@@ -53,4 +54,16 @@ func GetByEmail(ctx context.Context, email string) (model.User, error) {
 	}
 
 	return user, nil
+}
+
+func GetByParams(ctx context.Context, params contract.UserGetParams) ([]model.User, error) {
+	users := []model.User{}
+
+	err := stmtGetByParams.SelectContext(ctx, &users, params)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return users, err
+	}
+
+	return users, nil
 }

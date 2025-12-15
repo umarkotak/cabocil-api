@@ -1,6 +1,10 @@
 package contract_resp
 
-import "github.com/umarkotak/ytkidd-api/model"
+import (
+	"time"
+
+	"github.com/umarkotak/ytkidd-api/model"
+)
 
 type (
 	GetUserActivity struct {
@@ -29,5 +33,16 @@ type (
 		RedirectPath    string `json:"redirect_path"`
 		ChannelName     string `json:"channel_name"`
 		ChannelImageUrl string `json:"channel_image_url"`
+	}
+
+	OneUserActivity struct {
+		Email          string               `json:"email"`
+		AppSession     string               `json:"app_session"`
+		LastActivityAt time.Time            `json:"last_activity_at"`
+		Activities     []UserActivitySimple `json:"activities"`
+	}
+
+	GetRecentUserActivityForAdmin struct {
+		Users []OneUserActivity `json:"users"`
 	}
 )

@@ -74,6 +74,44 @@ var (
 		LIMIT :limit OFFSET :offset
 	`
 
+	queryGetRecentForAdmin = `
+		SELECT
+			ua.id,
+			ua.created_at,
+			ua.updated_at,
+			ua.deleted_at,
+			ua.user_id,
+			ua.app_session,
+			ua.youtube_video_id,
+			ua.book_id,
+			ua.book_content_id,
+			ua.metadata,
+			yv.title AS youtube_video_title,
+			yv.image_url AS youtube_video_image_url,
+			yc.name AS youtube_channel_name,
+			yc.image_url AS youtube_channel_image_url,
+			b.title AS book_title,
+			b.cover_file_guid AS book_cover_file_guid,
+			b.slug AS book_slug,
+			fb.storage AS book_cover_storage,
+			fb.exact_path AS book_cover_exact_path,
+			b.type AS book_type,
+			bc.page_number AS book_last_read_page_number,
+			u.email AS user_email
+		FROM user_activities ua
+		LEFT JOIN users u ON u.id = ua.user_id
+		LEFT JOIN books b ON b.id = ua.book_id
+		LEFT JOIN book_contents bc ON bc.id = CAST(ua.metadata->>'last_read_book_content_id' AS BIGINT)
+		LEFT JOIN youtube_videos yv ON yv.id = ua.youtube_video_id
+		LEFT JOIN youtube_channels yc ON yc.id = yv.youtube_channel_id
+		LEFT JOIN file_bucket fb ON fb.guid = b.cover_file_guid
+		WHERE
+			1 = 1
+			AND ua.deleted_at IS NULL
+		ORDER BY ua.updated_at DESC
+		LIMIT :limit OFFSET :offset
+	`
+
 	queryGetByUserActivity = fmt.Sprintf(`
 		SELECT
 			%s
@@ -191,6 +229,7 @@ var (
 	stmtUpsert                  *sqlx.NamedStmt
 	stmtDeleteByYoutubeVideoIDs *sqlx.NamedStmt
 	stmtDeleteByBookIDs         *sqlx.NamedStmt
+	stmtGetRecentForAdmin       *sqlx.NamedStmt
 )
 
 func Initialize() {
@@ -225,6 +264,10 @@ func Initialize() {
 		logrus.Fatal(err)
 	}
 	stmtDeleteByBookIDs, err = datastore.Get().Db.PrepareNamed(queryDeleteByBookIDs)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	stmtGetRecentForAdmin, err = datastore.Get().Db.PrepareNamed(queryGetRecentForAdmin)
 	if err != nil {
 		logrus.Fatal(err)
 	}

@@ -34,6 +34,19 @@ var (
 			AND u.deleted_at IS NULL
 	`, allColumns)
 
+	queryGetByParams = fmt.Sprintf(`
+		SELECT
+			%s
+		FROM users u
+		WHERE
+			1 = 1
+			AND (:guid = '' OR u.guid = :guid)
+			AND (:email = '' OR u.email = :email)
+			AND (:name = '' OR u.name = :name)
+			AND (:username = '' OR u.username = :username)
+			AND u.deleted_at IS NULL
+	`, allColumns)
+
 	queryGetByID = fmt.Sprintf(`
 		SELECT
 			%s
@@ -101,18 +114,24 @@ var (
 )
 
 var (
-	stmtGetByEmail *sqlx.NamedStmt
-	stmtGetByID    *sqlx.NamedStmt
-	stmtGetByGuid  *sqlx.NamedStmt
-	stmtInsert     *sqlx.NamedStmt
-	stmtUpdate     *sqlx.NamedStmt
-	stmtSoftDelete *sqlx.NamedStmt
+	stmtGetByEmail  *sqlx.NamedStmt
+	stmtGetByParams *sqlx.NamedStmt
+	stmtGetByID     *sqlx.NamedStmt
+	stmtGetByGuid   *sqlx.NamedStmt
+	stmtInsert      *sqlx.NamedStmt
+	stmtUpdate      *sqlx.NamedStmt
+	stmtSoftDelete  *sqlx.NamedStmt
 )
 
 func Initialize() {
 	var err error
 
 	stmtGetByEmail, err = datastore.Get().Db.PrepareNamed(queryGetByEmail)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	stmtGetByParams, err = datastore.Get().Db.PrepareNamed(queryGetByParams)
 	if err != nil {
 		logrus.Fatal(err)
 	}

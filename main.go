@@ -228,6 +228,8 @@ func initializeHttpServer() {
 		rUserAuth.Get("/user/check_auth", user_handler.CheckAuth)
 		rUserAuth.Get("/user/profile", user_handler.MyProfile)
 		rUserAuth.Get("/user/subscription", user_handler.MySubscription)
+		rAdminAuth.Get("/users", user_handler.AdminGetUsers)
+		rAdminAuth.Get("/users/all_activities/recent", user_handler.AdminGetUserActivities)
 
 		ri.Get("/products", product_handler.GetProducts)
 

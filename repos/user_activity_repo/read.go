@@ -55,3 +55,15 @@ func GetFullByUserActivity(ctx context.Context, params contract.GetUserActivity)
 
 	return obj, nil
 }
+
+func GetRecentForAdmin(ctx context.Context, params contract.GetUserActivity) ([]model.UserActivityFull, error) {
+	objs := []model.UserActivityFull{}
+
+	err := stmtGetRecentForAdmin.SelectContext(ctx, &objs, params)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return objs, err
+	}
+
+	return objs, nil
+}

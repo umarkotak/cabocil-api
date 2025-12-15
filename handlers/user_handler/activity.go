@@ -73,3 +73,24 @@ func PostUserActivity(w http.ResponseWriter, r *http.Request) {
 
 	render.Response(w, r, http.StatusOK, nil)
 }
+
+func AdminGetUserActivities(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	params := contract.GetUserActivity{
+		Pagination: model.Pagination{
+			Limit: utils.StringMustInt64(r.URL.Query().Get("limit")),
+			Page:  utils.StringMustInt64(r.URL.Query().Get("page")),
+		},
+	}
+	params.Pagination.SetDefault()
+
+	data, err := user_activity_service.GetRecentForAdmin(ctx, params)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		render.Error(w, r, err, "")
+		return
+	}
+
+	render.Response(w, r, http.StatusOK, data)
+}
