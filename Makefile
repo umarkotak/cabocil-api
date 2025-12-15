@@ -40,6 +40,8 @@ stop:
 
 deploy:
 	git pull --rebase origin master
+	go mod tidy
+	go mod vendor
 	make bin
 	make stop
 	make start
