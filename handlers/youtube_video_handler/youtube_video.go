@@ -2,6 +2,7 @@ package youtube_video_handler
 
 import (
 	"net/http"
+	"slices"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/sirupsen/logrus"
@@ -18,6 +19,10 @@ func GetYoutubeVideos(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	commonCtx := common_ctx.GetFromCtx(ctx)
+	active := "true"
+	if slices.Contains(model.ADMIN_ROLES, commonCtx.UserAuth.UserRole) {
+		active = "all"
+	}
 
 	params := contract.GetYoutubeVideos{
 		UserGuid:          commonCtx.UserAuth.GUID,
@@ -27,6 +32,7 @@ func GetYoutubeVideos(w http.ResponseWriter, r *http.Request) {
 		ExcludeIDs:        utils.StringMustSliceInt64(r.URL.Query().Get("exclude_ids"), ","),
 		ExcludeChannelIDs: utils.StringMustSliceInt64(r.URL.Query().Get("exclude_channel_ids"), ","),
 		Sort:              r.URL.Query().Get("sort"),
+		Active:            active,
 		Pagination: model.Pagination{
 			Limit: utils.StringMustInt64(r.URL.Query().Get("limit")),
 			Page:  utils.StringMustInt64(r.URL.Query().Get("page")),
