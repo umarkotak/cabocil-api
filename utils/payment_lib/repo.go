@@ -73,7 +73,7 @@ func Update(ctx context.Context, tx *sqlx.Tx, payment Payment) error {
 
 	namedStmt := stmtUpdate
 	if tx != nil {
-		namedStmt, err = tx.PrepareNamedContext(ctx, queryInsert)
+		namedStmt, err = tx.PrepareNamedContext(ctx, queryUpdate)
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
 			return err
