@@ -48,3 +48,6 @@ deploy:
 
 status:
 	sudo lsof -i :33000
+
+db-tunnel:
+	cloudflared access tcp --hostname pg.cabocil.com --url localhost:54322
