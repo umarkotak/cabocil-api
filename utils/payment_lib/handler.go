@@ -38,7 +38,7 @@ func MidtransCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	payment.PaymentType = midtransNotification.PaymentType
 	payment.ReferenceStatus = sql.NullString{midtransNotification.TransactionStatus, true}
-	payment.ReferenceNumber = sql.NullString{midtransNotification.ReferenceID, true}
+	payment.ReferenceNumber = sql.NullString{midtransNotification.ReferenceID, midtransNotification.ReferenceID != ""}
 	payment.FraudStatus = sql.NullString{midtransNotification.FraudStatus, true}
 	payment.SyncStatus()
 
