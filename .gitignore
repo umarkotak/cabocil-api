@@ -6,6 +6,7 @@ nohup.out
 cabocil-api
 cabocil-api.error.log
 cabocil-api.log
+.cache
 
 file_bucket/*
 !file_bucket/index.html
