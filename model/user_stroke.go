@@ -25,7 +25,7 @@ type (
 	Strokes []struct {
 		Tool         string        `json:"tool"`
 		Color        string        `json:"color"`
-		RelativeSize float64       `json:"relative_size"`
+		RelativeSize float64       `json:"relativeSize"`
 		Opacity      float64       `json:"opacity"`
 		Points       []StrokePoint `json:"points"`
 	}

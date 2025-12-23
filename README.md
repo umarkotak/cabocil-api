@@ -1,11 +1,14 @@
 # Ca Bocil Backend Service
 
 ## MISC
+
 - font awesome list: https://fontawesome.com/search?o=r&m=free
 - channel id finder: https://commentpicker.com/youtube-channel-id.php
 
 ## PRE REQUISITES
+
 - brew install caesiumclt
+- brew install ghostscript
 
 ## Notes
 
