@@ -255,3 +255,18 @@ CREATE TABLE IF NOT EXISTS user_activities (
 ALTER SEQUENCE user_activities_id_seq RESTART WITH 1;
 CREATE UNIQUE INDEX idx_user_activities_single_activity
   ON user_activities (user_id, app_session, youtube_video_id, book_id, book_content_id);
+
+CREATE TABLE IF NOT EXISTS flash_cards (
+  id SERIAL PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP WITH TIME ZONE,
+
+  slug TEXT NOT NULL UNIQUE,
+  name_id TEXT NOT NULL,
+  name_en TEXT NOT NULL,
+  picture_url TEXT NOT NULL,
+  tags TEXT [] NOT NULL DEFAULT '{}',
+  metadata JSONB NOT NULL DEFAULT '{}'
+);
+ALTER SEQUENCE flash_cards_id_seq RESTART WITH 1;

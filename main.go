@@ -31,6 +31,7 @@ import (
 	"github.com/umarkotak/ytkidd-api/repos/book_content_repo"
 	"github.com/umarkotak/ytkidd-api/repos/book_repo"
 	"github.com/umarkotak/ytkidd-api/repos/file_bucket_repo"
+	"github.com/umarkotak/ytkidd-api/repos/flash_card_repo"
 	"github.com/umarkotak/ytkidd-api/repos/google_repo"
 	"github.com/umarkotak/ytkidd-api/repos/order_repo"
 	"github.com/umarkotak/ytkidd-api/repos/product_repo"
@@ -170,6 +171,7 @@ func initializeDependencies() {
 	user_subscription_repo.Initialize()
 	user_stroke_repo.Initialize()
 	user_activity_repo.Initialize()
+	flash_card_repo.Initialize()
 
 	word_censor_lib.Initialize(word_censor_lib.WordCensorLib{
 		Words: []string{"kucing", "anjing", "gajah"},
