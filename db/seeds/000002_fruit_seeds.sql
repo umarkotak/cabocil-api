@@ -1,12 +1,12 @@
 INSERT INTO flash_cards
-  (slug,name_id, name_en, picture_url, tags)
+  (slug, name_en, name_id, picture_url, tags)
 VALUES
   ('lime', 'lime', 'jeruk nipis', 'https://data.cabocil.com/assets/fruits/lime.png', '{"fruit"}'),
   ('papaya', 'papaya', 'pepaya', 'https://data.cabocil.com/assets/fruits/papaya.png', '{"fruit"}'),
   ('melon', 'melon', 'melon', 'https://data.cabocil.com/assets/fruits/melon.png', '{"fruit"}'),
   ('peach', 'peach', 'peach', 'https://data.cabocil.com/assets/fruits/peach.png', '{"fruit"}'),
-  ('coconut', 'kelapa', 'coconut', 'https://data.cabocil.com/assets/fruits/coconut.png', '{"fruit"}'),
-  ('guava', 'jambu biji', 'guava', 'https://data.cabocil.com/assets/fruits/guava.png', '{"fruit"}'),
+  ('coconut', 'coconut', 'kelapa', 'https://data.cabocil.com/assets/fruits/coconut.png', '{"fruit"}'),
+  ('guava', 'guava', 'jambu biji', 'https://data.cabocil.com/assets/fruits/guava.png', '{"fruit"}'),
   ('watermelon', 'watermelon', 'semangka', 'https://data.cabocil.com/assets/fruits/watermelon.png', '{"fruit"}'),
   ('kiwi', 'kiwi', 'kiwi', 'https://data.cabocil.com/assets/fruits/kiwi.png', '{"fruit"}'),
   ('starfruit', 'starfruit', 'belimbing', 'https://data.cabocil.com/assets/fruits/starfruit.png', '{"fruit"}'),
@@ -31,4 +31,5 @@ VALUES
   ('lychee', 'lychee', 'leci', 'https://data.cabocil.com/assets/fruits/lychee.png', '{"fruit"}'),
   ('dragonfruit', 'dragonfruit', 'buah naga', 'https://data.cabocil.com/assets/fruits/dragonfruit.png', '{"fruit"}'),
   ('tomato', 'tomato', 'tomat', 'https://data.cabocil.com/assets/fruits/tomato.png', '{"fruit"}'),
+  ('pumpkin', 'pumpkin', 'labu', 'https://data.cabocil.com/assets/fruits/pumpkin.png', '{"fruit"}'),
   ('cherry', 'cherry', 'ceri', 'https://data.cabocil.com/assets/fruits/cherry.png', '{"fruit"}')
