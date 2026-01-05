@@ -39,7 +39,7 @@ var (
 		FROM flash_cards fc
 		WHERE
 			1 = 1
-			AND fc.tags && :tags
+			AND (:tags = '{}' OR fc.tags && :tags)
 			AND fc.deleted_at IS NULL
 		ORDER BY fc.id ASC
 		LIMIT :limit OFFSET :offset

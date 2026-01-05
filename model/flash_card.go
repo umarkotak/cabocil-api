@@ -12,17 +12,17 @@ import (
 
 type (
 	FlashCard struct {
-		ID        int64        `db:"id"`
-		CreatedAt time.Time    `db:"created_at"`
-		UpdatedAt time.Time    `db:"updated_at"`
-		DeletedAt sql.NullTime `db:"deleted_at"`
+		ID        int64        `db:"id" json:"id"`
+		CreatedAt time.Time    `db:"created_at" json:"created_at"`
+		UpdatedAt time.Time    `db:"updated_at" json:"updated_at"`
+		DeletedAt sql.NullTime `db:"deleted_at" json:"deleted_at"`
 
-		Slug       string            `db:"slug"`
-		NameID     string            `db:"name_id"`
-		NameEN     string            `db:"name_en"`
-		PictureURL string            `db:"picture_url"`
-		Tags       pq.StringArray    `db:"tags"`
-		Metadata   FlashCardMetadata `db:"metadata"`
+		Slug       string            `json:"slug" db:"slug"`
+		NameID     string            `json:"name_id" db:"name_id"`
+		NameEN     string            `json:"name_en" db:"name_en"`
+		PictureURL string            `json:"picture_url" db:"picture_url"`
+		Tags       pq.StringArray    `json:"tags" db:"tags"`
+		Metadata   FlashCardMetadata `json:"metadata" db:"metadata"`
 	}
 
 	FlashCardMetadata struct {

@@ -2,6 +2,7 @@ package flash_card_repo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
@@ -22,6 +23,7 @@ func BulkInsert(ctx context.Context, tx *sqlx.Tx, flashCards []model.FlashCard) 
 	}
 
 	for _, fc := range flashCards {
+		fmt.Printf("%+v", fc)
 		var id int64
 		err = namedStmt.GetContext(ctx, &id, fc)
 		if err != nil {

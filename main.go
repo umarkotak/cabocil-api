@@ -17,6 +17,7 @@ import (
 	"github.com/umarkotak/ytkidd-api/handlers/ai_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/book_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/comfy_ui_handler"
+	"github.com/umarkotak/ytkidd-api/handlers/flash_card_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/kemendikbud_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/order_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/ping_handler"
@@ -250,6 +251,10 @@ func initializeHttpServer() {
 
 		ri.Get("/poki/games", poki_handler.GetGameList)
 		ri.Get("/poki/games/detail", poki_handler.GetGameDetail)
+
+		ri.Get("/flash_card/{id}", flash_card_handler.GetByID)
+		ri.Get("/flash_cards", flash_card_handler.GetByTags)
+		rAdminAuth.Post("/flash_cards/bulk", flash_card_handler.BulkInsert)
 
 		ri.Get("/utils/image/compress", utils_handler.CompressHandler)
 		ri.Delete("/utils/image/cache", utils_handler.DeleteCacheHandler)
