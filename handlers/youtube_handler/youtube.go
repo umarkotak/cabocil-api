@@ -42,6 +42,8 @@ func ScrapVideos(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for i := 1; i <= int(maxPage); i++ {
+		logrus.Infof("start scrap iteration: %v", i)
+
 		nextPageToken, someVideoExist, err := youtube_service.ScrapVideos(ctx, params)
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
@@ -56,8 +58,11 @@ func ScrapVideos(w http.ResponseWriter, r *http.Request) {
 
 		params.PageToken = nextPageToken
 		if params.PageToken == "" {
+			logrus.Infof("break scrap iteration: %v", i)
 			break
 		}
+
+		logrus.Infof("finish scrap iteration: %v", i)
 	}
 
 	render.Response(w, r, 200, params)

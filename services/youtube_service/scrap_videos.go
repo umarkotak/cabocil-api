@@ -120,6 +120,8 @@ func ScrapVideos(ctx context.Context, params contract.ScrapVideos) (string, bool
 		}
 	}
 
+	// respString, _ := response.MarshalJSON()
+	// logrus.Infof("youtube response: %+v", string(respString))
 	nextPageToken = response.NextPageToken
 
 	return nextPageToken, someVideoExist, nil
