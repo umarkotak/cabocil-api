@@ -33,3 +33,38 @@ VALUES
   ('tomato', 'tomato', 'tomat', 'https://data.cabocil.com/assets/fruits/tomato.png', '{"fruit"}'),
   ('pumpkin', 'pumpkin', 'labu', 'https://data.cabocil.com/assets/fruits/pumpkin.png', '{"fruit"}'),
   ('cherry', 'cherry', 'ceri', 'https://data.cabocil.com/assets/fruits/cherry.png', '{"fruit"}')
+
+INSERT INTO flash_cards
+  (slug, name_en, name_id, picture_url, tags)
+VALUES
+  ('asparagus', 'asparagus', 'asparagus', 'https://data.cabocil.com/assets/vegetables/asparagus.png', '{"vegetables"}'),
+  ('bambooshoot', 'bamboo shoot', 'rebung bambu', 'https://data.cabocil.com/assets/vegetables/bambooshoot.png', '{"vegetables"}'),
+  ('bellpepper', 'bellpepper', 'paprika', 'https://data.cabocil.com/assets/vegetables/bellpepper.png', '{"vegetables"}'),
+  ('brocoli', 'brocoli', 'brokoli', 'https://data.cabocil.com/assets/vegetables/brocoli.png', '{"vegetables"}'),
+  ('cabbage', 'cabbage', 'kubis', 'https://data.cabocil.com/assets/vegetables/cabbage.png', '{"vegetables"}'),
+  ('carrot', 'carrot', 'wortel', 'https://data.cabocil.com/assets/vegetables/carrot.png', '{"vegetables"}'),
+  ('cassava', 'cassava', 'singkong', 'https://data.cabocil.com/assets/vegetables/cassava.png', '{"vegetables"}'),
+  ('cauliflower', 'cauliflower', 'kembang kol', 'https://data.cabocil.com/assets/vegetables/cauliflower.png', '{"vegetables"}'),
+  ('cellery', 'cellery', 'seledri', 'https://data.cabocil.com/assets/vegetables/cellery.png', '{"vegetables"}'),
+  ('chayote', 'chayote', 'labu siem', 'https://data.cabocil.com/assets/vegetables/chayote.png', '{"vegetables"}'),
+  ('chillipepper', 'chillipepper', 'cabai', 'https://data.cabocil.com/assets/vegetables/chillipepper.png', '{"vegetables"}'),
+  ('cucumber', 'cucumber', 'timun', 'https://data.cabocil.com/assets/vegetables/cucumber.png', '{"vegetables"}'),
+  ('edamame', 'edamame', 'edamame', 'https://data.cabocil.com/assets/vegetables/edamame.png', '{"vegetables"}'),
+  ('eggplant', 'eggplant', 'terong', 'https://data.cabocil.com/assets/vegetables/eggplant.png', '{"vegetables"}'),
+  ('garlic', 'garlic', 'bawang putih', 'https://data.cabocil.com/assets/vegetables/garlic.png', '{"vegetables"}'),
+  ('ginger', 'ginger', 'jahe', 'https://data.cabocil.com/assets/vegetables/ginger.png', '{"vegetables"}'),
+  ('greenpea', 'greenpea', 'kacang plong', 'https://data.cabocil.com/assets/vegetables/greenpea.png', '{"vegetables"}'),
+  ('kale', 'kale', 'kale', 'https://data.cabocil.com/assets/vegetables/kale.png', '{"vegetables"}'),
+  ('leek', 'leek', 'daun bawang', 'https://data.cabocil.com/assets/vegetables/leek.png', '{"vegetables"}'),
+  ('lemongrass', 'lemongrass', 'sereh', 'https://data.cabocil.com/assets/vegetables/lemongrass.png', '{"vegetables"}'),
+  ('lettuce', 'lettuce', 'selada', 'https://data.cabocil.com/assets/vegetables/lettuce.png', '{"vegetables"}'),
+  ('longbean', 'longbean', 'kacang panjang', 'https://data.cabocil.com/assets/vegetables/longbean.png', '{"vegetables"}'),
+  ('mushroom', 'mushroom', 'jamur', 'https://data.cabocil.com/assets/vegetables/mushroom.png', '{"vegetables"}'),
+  ('onion', 'onion', 'bawang bombai', 'https://data.cabocil.com/assets/vegetables/onion.png', '{"vegetables"}'),
+  ('pokcoy', 'pokcoy', 'pak coy', 'https://data.cabocil.com/assets/vegetables/pokcoy.png', '{"vegetables"}'),
+  ('potato', 'potato', 'kentang', 'https://data.cabocil.com/assets/vegetables/potato.png', '{"vegetables"}'),
+  ('radish', 'radish', 'lobak', 'https://data.cabocil.com/assets/vegetables/raddish.png', '{"vegetables"}'),
+  ('spinach', 'spinach', 'bayam', 'https://data.cabocil.com/assets/vegetables/spinach.png', '{"vegetables"}'),
+  ('taro', 'taro', 'ubi', 'https://data.cabocil.com/assets/vegetables/taro.png', '{"vegetables"}'),
+  ('truffle', 'truffle', 'truffle', 'https://data.cabocil.com/assets/vegetables/truffle.png', '{"vegetables"}'),
+  ('turmeric', 'turmeric', 'kunyit', 'https://data.cabocil.com/assets/vegetables/turmeric.png', '{"vegetables"}')
