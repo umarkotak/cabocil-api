@@ -18,6 +18,7 @@ import (
 	"github.com/umarkotak/ytkidd-api/handlers/book_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/comfy_ui_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/flash_card_handler"
+	"github.com/umarkotak/ytkidd-api/handlers/gold_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/kemendikbud_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/order_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/ping_handler"
@@ -181,6 +182,7 @@ func initializeDependencies() {
 
 func initializeHttpServer() {
 	poki_handler.Initialize()
+	gold_handler.Initialize()
 
 	r := chi.NewRouter()
 
@@ -258,6 +260,8 @@ func initializeHttpServer() {
 
 		ri.Get("/utils/image/compress", utils_handler.CompressHandler)
 		ri.Delete("/utils/image/cache", utils_handler.DeleteCacheHandler)
+
+		ri.Get("/gold/price/today", gold_handler.GetTodayPrice)
 	})
 
 	r.Get("/file_bucket/*", func(w http.ResponseWriter, r *http.Request) {
