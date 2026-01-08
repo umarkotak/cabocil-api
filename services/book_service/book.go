@@ -21,7 +21,6 @@ import (
 	"github.com/umarkotak/ytkidd-api/repos/book_repo"
 	"github.com/umarkotak/ytkidd-api/repos/file_bucket_repo"
 	"github.com/umarkotak/ytkidd-api/repos/user_activity_repo"
-	"github.com/umarkotak/ytkidd-api/repos/user_repo"
 	"github.com/umarkotak/ytkidd-api/repos/user_stroke_repo"
 	"github.com/umarkotak/ytkidd-api/repos/user_subscription_repo"
 	"github.com/umarkotak/ytkidd-api/utils"
@@ -111,21 +110,14 @@ func GetBookDetail(ctx context.Context, params contract.GetBooks) (contract_resp
 		}
 	}
 
-	user, err := user_repo.GetByGuid(ctx, params.UserGuid)
-	if err != nil && err != sql.ErrNoRows {
-		logrus.WithContext(ctx).Error(err)
-		return contract_resp.BookDetail{}, err
-	}
-
 	isSubscribed := false
 	if slices.Contains(model.ADMIN_ROLES, params.UserRole) {
 		isSubscribed = true
 	} else {
-		subs, err := user_subscription_repo.GetActiveByUserID(ctx, user.ID)
+		isSubscribed, err = user_subscription_repo.IsUserGuidHasActiveSubscription(ctx, params.UserGuid)
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
 		}
-		isSubscribed = len(subs) > 0
 	}
 
 	bookContents, err := book_content_repo.GetByBookID(ctx, book.ID)

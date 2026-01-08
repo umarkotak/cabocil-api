@@ -91,6 +91,19 @@ var (
 		ORDER BY us.id DESC
 		LIMIT 1
 	`, allColumns)
+
+	queryIsUserGuidHasActiveSubscription = fmt.Sprintf(`
+		SELECT
+			%s
+		FROM user_subscriptions us
+		INNER JOIN users u ON us.user_id = u.id
+		WHERE
+			u.guid = :user_guid
+			AND us.ended_at > NOW()
+			AND us.deleted_at IS NULL
+		ORDER BY us.id DESC
+		LIMIT 1
+	`, allColumns)
 )
 
 var (
@@ -100,6 +113,7 @@ var (
 	stmtGetAllActiveByUserID            *sqlx.NamedStmt
 	stmtInsert                          *sqlx.NamedStmt
 	stmtGetUserLatestActiveSubscription *sqlx.NamedStmt
+	stmtIsUserGuidHasActiveSubscription *sqlx.NamedStmt
 )
 
 func Initialize() {
@@ -126,6 +140,10 @@ func Initialize() {
 		logrus.Fatal(err)
 	}
 	stmtGetUserLatestActiveSubscription, err = datastore.Get().Db.PrepareNamed(queryGetUserLatestActiveSubscription)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	stmtIsUserGuidHasActiveSubscription, err = datastore.Get().Db.PrepareNamed(queryIsUserGuidHasActiveSubscription)
 	if err != nil {
 		logrus.Fatal(err)
 	}

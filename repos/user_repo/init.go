@@ -47,6 +47,29 @@ var (
 			AND u.deleted_at IS NULL
 	`, allColumns)
 
+	queryGetByParamsWithSubscription = fmt.Sprintf(`
+		SELECT
+			%s,
+			COALESCE(us.ended_at, CAST('1970-01-01' AS TIMESTAMP)) AS subscription_ended_at
+		FROM users u
+		LEFT JOIN (
+			SELECT
+				user_id,
+				MAX(ended_at) AS ended_at
+			FROM user_subscriptions
+			WHERE deleted_at IS NULL
+			GROUP BY user_id
+		) us ON u.id = us.user_id
+		WHERE
+			1 = 1
+			AND (:guid = '' OR u.guid = :guid)
+			AND (:email = '' OR u.email = :email)
+			AND (:name = '' OR u.name = :name)
+			AND (:username = '' OR u.username = :username)
+			AND u.deleted_at IS NULL
+		ORDER BY u.id ASC
+	`, allColumns)
+
 	queryGetByID = fmt.Sprintf(`
 		SELECT
 			%s
@@ -114,13 +137,14 @@ var (
 )
 
 var (
-	stmtGetByEmail  *sqlx.NamedStmt
-	stmtGetByParams *sqlx.NamedStmt
-	stmtGetByID     *sqlx.NamedStmt
-	stmtGetByGuid   *sqlx.NamedStmt
-	stmtInsert      *sqlx.NamedStmt
-	stmtUpdate      *sqlx.NamedStmt
-	stmtSoftDelete  *sqlx.NamedStmt
+	stmtGetByEmail                  *sqlx.NamedStmt
+	stmtGetByParams                 *sqlx.NamedStmt
+	stmtGetByParamsWithSubscription *sqlx.NamedStmt
+	stmtGetByID                     *sqlx.NamedStmt
+	stmtGetByGuid                   *sqlx.NamedStmt
+	stmtInsert                      *sqlx.NamedStmt
+	stmtUpdate                      *sqlx.NamedStmt
+	stmtSoftDelete                  *sqlx.NamedStmt
 )
 
 func Initialize() {
@@ -132,6 +156,11 @@ func Initialize() {
 	}
 
 	stmtGetByParams, err = datastore.Get().Db.PrepareNamed(queryGetByParams)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	stmtGetByParamsWithSubscription, err = datastore.Get().Db.PrepareNamed(queryGetByParamsWithSubscription)
 	if err != nil {
 		logrus.Fatal(err)
 	}

@@ -67,7 +67,7 @@ func MyProfile(w http.ResponseWriter, r *http.Request) {
 func AdminGetUsers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	users, err := user_repo.GetByParams(ctx, contract.UserGetParams{
+	users, err := user_repo.GetByParamsWithSubscription(ctx, contract.UserGetParams{
 		Guid:     r.URL.Query().Get("guid"),
 		Email:    r.URL.Query().Get("email"),
 		Name:     r.URL.Query().Get("name"),
@@ -82,17 +82,18 @@ func AdminGetUsers(w http.ResponseWriter, r *http.Request) {
 	usersFormatted := make([]contract_resp.User, 0, len(users))
 	for _, user := range users {
 		usersFormatted = append(usersFormatted, contract_resp.User{
-			ID:        user.ID,
-			CreatedAt: user.CreatedAt,
-			UpdatedAt: user.UpdatedAt,
-			Guid:      user.Guid,
-			Email:     user.Email,
-			About:     user.About,
-			Password:  user.Password,
-			Name:      user.Name,
-			Username:  user.Username,
-			PhotoUrl:  user.PhotoUrl,
-			UserRole:  user.UserRole,
+			ID:                  user.ID,
+			CreatedAt:           user.CreatedAt,
+			UpdatedAt:           user.UpdatedAt,
+			Guid:                user.Guid,
+			Email:               user.Email,
+			About:               user.About,
+			Password:            user.Password,
+			Name:                user.Name,
+			Username:            user.Username,
+			PhotoUrl:            user.PhotoUrl,
+			UserRole:            user.UserRole,
+			SubscriptionEndedAt: user.SubscriptionEndedAt,
 		})
 	}
 

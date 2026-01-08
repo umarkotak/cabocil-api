@@ -2,6 +2,7 @@ package user_subscription_repo
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/ytkidd-api/model"
@@ -65,4 +66,19 @@ func GetUserLatestActiveSubscription(ctx context.Context, userID int64) (model.U
 		return obj, err
 	}
 	return obj, nil
+}
+
+func IsUserGuidHasActiveSubscription(ctx context.Context, userGuid string) (bool, error) {
+	obj := model.UserSubscription{}
+	err := stmtIsUserGuidHasActiveSubscription.GetContext(ctx, &obj, map[string]any{
+		"user_guid": userGuid,
+	})
+	if err == sql.ErrNoRows {
+		return false, nil
+	}
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return false, err
+	}
+	return obj.ID > 0, nil
 }

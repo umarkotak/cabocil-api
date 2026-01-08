@@ -37,4 +37,9 @@ type (
 		PhotoUrl  string       `db:"photo_url"`  //
 		UserRole  string       `db:"user_role"`  // Enum: basic, admin
 	}
+
+	UserWithSubscription struct {
+		User
+		SubscriptionEndedAt time.Time `db:"subscription_ended_at"`
+	}
 )

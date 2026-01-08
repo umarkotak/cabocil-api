@@ -16,6 +16,7 @@ import (
 	"github.com/umarkotak/ytkidd-api/datastore"
 	"github.com/umarkotak/ytkidd-api/handlers/ai_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/book_handler"
+	"github.com/umarkotak/ytkidd-api/handlers/book_link_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/comfy_ui_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/flash_card_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/gold_handler"
@@ -25,12 +26,14 @@ import (
 	"github.com/umarkotak/ytkidd-api/handlers/poki_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/product_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/user_handler"
+	"github.com/umarkotak/ytkidd-api/handlers/user_subscription_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/utils_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/youtube_channel_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/youtube_handler"
 	"github.com/umarkotak/ytkidd-api/handlers/youtube_video_handler"
 	"github.com/umarkotak/ytkidd-api/model"
 	"github.com/umarkotak/ytkidd-api/repos/book_content_repo"
+	"github.com/umarkotak/ytkidd-api/repos/book_link_repo"
 	"github.com/umarkotak/ytkidd-api/repos/book_repo"
 	"github.com/umarkotak/ytkidd-api/repos/file_bucket_repo"
 	"github.com/umarkotak/ytkidd-api/repos/flash_card_repo"
@@ -174,6 +177,7 @@ func initializeDependencies() {
 	user_stroke_repo.Initialize()
 	user_activity_repo.Initialize()
 	flash_card_repo.Initialize()
+	book_link_repo.Initialize()
 
 	word_censor_lib.Initialize(word_censor_lib.WordCensorLib{
 		Words: []string{"kucing", "anjing", "gajah"},
@@ -236,6 +240,8 @@ func initializeHttpServer() {
 		rAdminAuth.Get("/users", user_handler.AdminGetUsers)
 		rAdminAuth.Get("/users/all_activities/recent", user_handler.AdminGetUserActivities)
 
+		rAdminAuth.Post("/user/subscription/direct_inject", user_subscription_handler.DirectInject)
+
 		ri.Get("/products", product_handler.GetProducts)
 
 		rUserAuth.Post("/order/create", order_handler.PostCreateOrder)
@@ -262,6 +268,8 @@ func initializeHttpServer() {
 		ri.Delete("/utils/image/cache", utils_handler.DeleteCacheHandler)
 
 		ri.Get("/gold/price/today", gold_handler.GetTodayPrice)
+
+		rOptionalUserAuth.Get("/book_links", book_link_handler.GetBookLinks)
 	})
 
 	r.Get("/file_bucket/*", func(w http.ResponseWriter, r *http.Request) {

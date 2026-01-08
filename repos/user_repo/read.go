@@ -67,3 +67,15 @@ func GetByParams(ctx context.Context, params contract.UserGetParams) ([]model.Us
 
 	return users, nil
 }
+
+func GetByParamsWithSubscription(ctx context.Context, params contract.UserGetParams) ([]model.UserWithSubscription, error) {
+	users := []model.UserWithSubscription{}
+
+	err := stmtGetByParamsWithSubscription.SelectContext(ctx, &users, params)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return users, err
+	}
+
+	return users, nil
+}

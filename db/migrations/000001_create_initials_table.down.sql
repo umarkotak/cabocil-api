@@ -12,3 +12,6 @@ DROP TABLE IF EXISTS worksheets;
 DROP TABLE IF EXISTS youtube_videos;
 DROP TABLE IF EXISTS youtube_channels;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS flash_cards;
+DROP TABLE IF EXISTS book_links;
+DROP TABLE IF EXISTS affiliate_links;
