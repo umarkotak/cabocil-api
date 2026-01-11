@@ -10,9 +10,10 @@ import (
 
 type ( // ChannelDetails holds the information we want to return.
 	ChannelDetails struct {
-		Name         string
-		ThumbnailURL string
-		URL          string
+		Name              string
+		ThumbnailURL      string
+		URL               string
+		UploadsPlaylistID string
 	}
 
 	// ---- Structs for parsing the API's JSON response ----
@@ -24,7 +25,18 @@ type ( // ChannelDetails holds the information we want to return.
 
 	// ChannelItem represents a single channel resource in the response.
 	ChannelItem struct {
-		Snippet Snippet `json:"snippet"`
+		Snippet        Snippet        `json:"snippet"`
+		ContentDetails ContentDetails `json:"contentDetails"`
+	}
+
+	// ContentDetails contains related playlists info.
+	ContentDetails struct {
+		RelatedPlaylists RelatedPlaylists `json:"relatedPlaylists"`
+	}
+
+	// RelatedPlaylists contains the uploads playlist ID.
+	RelatedPlaylists struct {
+		Uploads string `json:"uploads"`
 	}
 
 	// Snippet contains the main details like title and thumbnails.
@@ -63,7 +75,7 @@ func GetYouTubeChannelDetails(apiKey, channelID string) (*ChannelDetails, error)
 	// 1. Construct the API request URL
 	apiURL := "https://www.googleapis.com/youtube/v3/channels"
 	params := url.Values{}
-	params.Add("part", "snippet") // We need the 'snippet' to get title and thumbnails
+	params.Add("part", "snippet,contentDetails") // We need the 'snippet' to get title and thumbnails, 'contentDetails' for uploads playlist
 	params.Add("id", channelID)
 	params.Add("key", apiKey)
 
@@ -100,11 +112,13 @@ func GetYouTubeChannelDetails(apiKey, channelID string) (*ChannelDetails, error)
 
 	// 5. Extract the data and populate our struct
 	channelData := apiResponse.Items[0].Snippet
+	contentDetails := apiResponse.Items[0].ContentDetails
 
 	details := &ChannelDetails{
-		Name:         channelData.Title,
-		ThumbnailURL: channelData.Thumbnails.High.URL,
-		URL:          fmt.Sprintf("https://www.youtube.com/channel/%s", channelID),
+		Name:              channelData.Title,
+		ThumbnailURL:      channelData.Thumbnails.High.URL,
+		URL:               fmt.Sprintf("https://www.youtube.com/channel/%s", channelID),
+		UploadsPlaylistID: contentDetails.RelatedPlaylists.Uploads,
 	}
 
 	return details, nil
